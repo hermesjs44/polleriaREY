@@ -8,7 +8,7 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- PWA Manifest Inline (Corregido error de sintaxis) -->
+  <!-- PWA Manifest Inline -->
   <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Poller%C3%ADa%20REY%22,%22short_name%22:%22Poller%C3%ADaREY%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22background_color%22:%22#dc2626%22,%22theme_color%22:%22#b91c1c%22}">
 </head>
 <body class="bg-gray-100 font-sans min-h-screen flex flex-col">
@@ -100,12 +100,18 @@
         </button>
       </div>
 
-      <nav id="nav-tabs" class="flex bg-red-900/60 p-1 rounded-lg text-xs md:text-sm font-semibold gap-1">
+      <nav id="nav-tabs" class="flex bg-red-900/60 p-1 rounded-lg text-xs md:text-sm font-semibold gap-1 flex-wrap">
         <button id="btn-tab-cliente" onclick="mostrarVista('cliente')" class="tab-btn px-3 py-1.5 rounded-md text-red-100 hover:bg-red-800">
           🛍️ Tienda
         </button>
+        <button id="btn-tab-clientes-compras" onclick="mostrarVista('clientes-compras')" class="tab-btn px-3 py-1.5 rounded-md text-red-100 hover:bg-red-800 hidden">
+          👥 Clientes y Promos
+        </button>
         <button id="btn-tab-delivery" onclick="mostrarVista('delivery')" class="tab-btn px-3 py-1.5 rounded-md text-red-100 hover:bg-red-800 hidden">
           🛵 Delivery
+        </button>
+        <button id="btn-tab-puntos" onclick="mostrarVista('puntos')" class="tab-btn px-3 py-1.5 rounded-md text-red-100 hover:bg-red-800 hidden">
+          ⭐ Puntos
         </button>
         <button id="btn-tab-disenador" onclick="mostrarVista('disenador')" class="tab-btn px-3 py-1.5 rounded-md text-red-100 hover:bg-red-800 hidden">
           🎨 Diseñador
@@ -214,6 +220,86 @@
     </div>
   </main>
 
+  <!-- VISTA: CLIENTES Y COMPRAS -->
+  <main id="vista-clientes-compras" class="max-w-6xl mx-auto p-4 md:p-6 flex-1 w-full hidden space-y-6">
+    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
+      <div class="border-b pb-3 flex justify-between items-center">
+        <div>
+          <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+            👥 Registro de Clientes y Compras
+          </h2>
+          <p class="text-xs text-gray-500">Historial de consumo por cliente y envío directo de promociones por WhatsApp.</p>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-gray-600">
+          <thead class="bg-gray-100 text-gray-800 font-bold border-b">
+            <tr>
+              <th class="p-2.5 border-r">Cliente</th>
+              <th class="p-2.5 border-r">Teléfono</th>
+              <th class="p-2.5 border-r text-center">Cant. Pedidos</th>
+              <th class="p-2.5 border-r text-right">Total Consumido</th>
+              <th class="p-2.5 border-r text-center">Puntos Acumulados</th>
+              <th class="p-2.5 text-center">Acción Promocional</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-clientes-compras" class="divide-y divide-gray-100">
+            <tr>
+              <td colspan="6" class="p-4 text-center text-gray-400 italic">Cargando datos de clientes...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- VISTA: CONFIGURACIÓN DE PUNTOS -->
+  <main id="vista-puntos" class="max-w-4xl mx-auto p-4 md:p-6 flex-1 w-full hidden space-y-6">
+    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6">
+      <div class="border-b pb-3">
+        <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+          ⭐ Configuración del Sistema de Puntos y Fidelización
+        </h2>
+        <p class="text-xs text-gray-500">Define las reglas para otorgar puntos por compras realizada y establece la caducidad del programa.</p>
+      </div>
+
+      <form onsubmit="guardarConfiguracionPuntos(event)" class="space-y-4">
+        <div class="flex items-center gap-3 bg-amber-50 p-3 rounded-lg border border-amber-200">
+          <input type="checkbox" id="puntos-activo" class="w-5 h-5 text-amber-600 rounded focus:ring-amber-500">
+          <label for="puntos-activo" class="text-sm font-bold text-gray-800 cursor-pointer">
+            Activar Sistema de Puntos
+          </label>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Monto de Compra en Pesos ($)</label>
+            <input type="number" id="puntos-pesos" required min="1" placeholder="Ej: 1000" class="w-full text-xs p-2 border rounded">
+            <p class="text-[10px] text-gray-500 mt-0.5">Por cada esta cantidad de pesos gastados...</p>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Cantidad de Puntos Otorgados</label>
+            <input type="number" id="puntos-cantidad" required min="1" placeholder="Ej: 10" class="w-full text-xs p-2 border rounded">
+            <p class="text-[10px] text-gray-500 mt-0.5">...el cliente sumará esta cantidad de puntos.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Fecha de Caducidad de Puntos (Opcional)</label>
+            <input type="date" id="puntos-fecha-expiracion" class="w-full text-xs p-2 border rounded bg-white">
+            <p class="text-[10px] text-gray-500 mt-0.5">Si se establece, los puntos dejarán de acumularse/usarse luego de esta fecha.</p>
+          </div>
+        </div>
+
+        <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold py-2.5 px-4 rounded shadow">
+          💾 Guardar Configuración de Puntos
+        </button>
+      </form>
+    </div>
+  </main>
+
   <!-- VISTA 2: DELIVERY -->
   <main id="vista-delivery" class="p-4 md:p-6 flex-1 w-full hidden">
     <header class="mb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
@@ -277,7 +363,29 @@
   </main>
 
   <!-- VISTA 3: DISEÑADOR -->
-  <main id="vista-disenador" class="max-w-4xl mx-auto p-4 md:p-6 flex-1 w-full hidden space-y-6">
+  <main id="vista-disenador" class="max-w-5xl mx-auto p-4 md:p-6 flex-1 w-full hidden space-y-6">
+    
+    <!-- ACCIONES DE REINICIO DE SISTEMA (SOLO DISEÑADOR) -->
+    <div class="bg-red-50 p-5 rounded-xl border border-red-200 shadow-sm space-y-3">
+      <h3 class="text-sm font-bold text-red-900 flex items-center gap-2">
+        ⚠️ Herramientas de Mantenimiento y Reinicio
+      </h3>
+      <p class="text-xs text-red-700">
+        Usa estas funciones avanzadas para limpiar o restablecer colecciones completas en Firestore.
+      </p>
+      <div class="flex flex-wrap gap-3 pt-1">
+        <button onclick="reiniciarPedidosCompletos()" class="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-3.5 py-2 rounded shadow transition-colors flex items-center gap-1.5">
+          🔄 Reiniciar TODOS los Pedidos
+        </button>
+        <button onclick="reiniciarPedidosFinalizados()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs px-3.5 py-2 rounded shadow transition-colors flex items-center gap-1.5">
+          🧹 Borrar Solo Entregados / Cancelados
+        </button>
+        <button onclick="reiniciarProductos()" class="bg-gray-800 hover:bg-black text-white font-bold text-xs px-3.5 py-2 rounded shadow transition-colors flex items-center gap-1.5">
+          📦 Restablecer Productos Iniciales
+        </button>
+      </div>
+    </div>
+
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       
       <div class="bg-emerald-50 p-5 rounded-xl border border-emerald-200 shadow-sm space-y-3">
@@ -312,6 +420,64 @@
         </form>
       </div>
 
+    </div>
+
+    <!-- FORMULARIO DE CREACIÓN DE USUARIOS (MOVIDO A DISEÑADOR) -->
+    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6">
+      <div class="border-b pb-3">
+        <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+          👤 Gestión y Creación de Usuarios
+        </h2>
+        <p class="text-xs text-gray-500">Creación de accesos del sistema con asignación de roles.</p>
+      </div>
+
+      <form id="form-crear-usuario" onsubmit="crearUsuarioSistema(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Usuario / Email</label>
+          <input type="text" id="user-nombre" required placeholder="ej: juan.perez@correo.com" class="w-full text-xs p-2 border rounded">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Contraseña</label>
+          <input type="password" id="user-pass" required placeholder="••••••••" class="w-full text-xs p-2 border rounded">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Rol / Nivel de Permisos</label>
+          <select id="user-rol" class="w-full text-xs p-2 border rounded bg-white">
+            <option value="delivery_general">🛵 Delivery (General - Acceso Completo)</option>
+            <option value="delivery_reparto">🛵 Delivery (Reparto - Restringido)</option>
+            <option value="disenador">🎨 Diseñador</option>
+            <option value="administrador">👑 Administrador</option>
+            <option value="cliente">🛍️ Cliente</option>
+          </select>
+        </div>
+        <div class="md:col-span-3">
+          <button type="submit" class="bg-red-700 hover:bg-red-800 text-white text-xs font-bold py-2.5 px-4 rounded shadow">
+            👤 Crear Nuevo Usuario
+          </button>
+        </div>
+      </form>
+
+      <!-- LISTA DE USUARIOS CREADOS -->
+      <div class="border-t pt-4 space-y-3">
+        <h3 class="text-sm font-bold text-gray-800">Usuarios registrados en el sistema</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-gray-600">
+            <thead class="bg-gray-100 text-gray-800 font-bold border-b">
+              <tr>
+                <th class="p-2 border-r">Usuario</th>
+                <th class="p-2 border-r">Nombre</th>
+                <th class="p-2 border-r">Rol</th>
+                <th class="p-2">Creado Por</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-usuarios-creados" class="divide-y divide-gray-100">
+              <tr>
+                <td colspan="4" class="p-3 text-center text-gray-400 italic">Cargando usuarios...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
     <!-- FORMULARIO DE PRODUCTOS -->
@@ -428,11 +594,143 @@
         </table>
       </div>
     </div>
+
+    <!-- TABLA DE AUDITORÍA (MOVIDA Y VISIBLE SOLO EN DISEÑADOR) -->
+    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
+      <div class="border-b pb-2 flex justify-between items-center">
+        <div>
+          <h3 class="text-base font-bold text-gray-800 flex items-center gap-2">
+            📜 Registro de Auditoría y Modificaciones por Usuario
+          </h3>
+          <p class="text-xs text-gray-500">Historial de acciones registradas con firma de usuario y fecha (Exclusivo Diseñador).</p>
+        </div>
+        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full">
+          🟢 Tiempo Real
+        </span>
+      </div>
+
+      <div class="overflow-x-auto max-h-72 overflow-y-auto border rounded-lg">
+        <table class="w-full text-left text-xs text-gray-600">
+          <thead class="bg-gray-100 text-gray-800 font-bold sticky top-0 border-b">
+            <tr>
+              <th class="p-2.5 border-r">Fecha / Hora</th>
+              <th class="p-2.5 border-r">Usuario</th>
+              <th class="p-2.5 border-r">Rol</th>
+              <th class="p-2.5 border-r">Acción Realizada</th>
+              <th class="p-2.5">Detalles</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-auditoria" class="divide-y divide-gray-100">
+            <tr>
+              <td colspan="5" class="p-4 text-center text-gray-400 italic">Cargando historial de modificaciones...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </main>
 
-  <!-- VISTA 4: ADMINISTRADOR + AUDITORÍA Y PLANTILLA WHATSAPP -->
+  <!-- VISTA 4: ADMINISTRADOR (MENÚ RESUMEN DE VENTAS + PLANTILLA WA) -->
   <main id="vista-admin" class="max-w-5xl mx-auto p-4 md:p-6 flex-1 w-full hidden space-y-6">
     
+    <!-- MENÚ RESUMEN Y MÉTRICAS DE PEDIDOS (SOLO ADMIN) -->
+    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6">
+      <div class="border-b pb-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+        <div>
+          <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+            📊 Resumen General e Histórico de Pedidos
+          </h2>
+          <p class="text-xs text-gray-500">Estadísticas e ingresos desglosados por período, entrega, pagos y productos.</p>
+        </div>
+        <span class="bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full">
+          👑 Panel Administrador
+        </span>
+      </div>
+
+      <!-- MÉTRICAS TEMPORALES -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-red-50 p-3.5 rounded-xl border border-red-100 text-center">
+          <span class="text-[10px] font-bold uppercase text-red-600 tracking-wider">Hoy (Día)</span>
+          <div id="stat-dia-pedidos" class="text-xl font-black text-red-900 mt-1">0 ped.</div>
+          <div id="stat-dia-monto" class="text-xs font-bold text-red-700">$0</div>
+        </div>
+
+        <div class="bg-amber-50 p-3.5 rounded-xl border border-amber-100 text-center">
+          <span class="text-[10px] font-bold uppercase text-amber-700 tracking-wider">Esta Semana</span>
+          <div id="stat-semana-pedidos" class="text-xl font-black text-amber-900 mt-1">0 ped.</div>
+          <div id="stat-semana-monto" class="text-xs font-bold text-amber-800">$0</div>
+        </div>
+
+        <div class="bg-blue-50 p-3.5 rounded-xl border border-blue-100 text-center">
+          <span class="text-[10px] font-bold uppercase text-blue-700 tracking-wider">Este Mes</span>
+          <div id="stat-mes-pedidos" class="text-xl font-black text-blue-900 mt-1">0 ped.</div>
+          <div id="stat-mes-monto" class="text-xs font-bold text-blue-800">$0</div>
+        </div>
+
+        <div class="bg-emerald-50 p-3.5 rounded-xl border border-emerald-100 text-center">
+          <span class="text-[10px] font-bold uppercase text-emerald-700 tracking-wider">Este Año</span>
+          <div id="stat-anio-pedidos" class="text-xl font-black text-emerald-900 mt-1">0 ped.</div>
+          <div id="stat-anio-monto" class="text-xs font-bold text-emerald-800">$0</div>
+        </div>
+      </div>
+
+      <!-- MÉTRICAS POR ENTREGA Y PAGO -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- FORMA DE ENTREGA -->
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-2">
+          <h3 class="text-xs font-bold text-gray-700 uppercase tracking-wide border-b pb-1 flex items-center gap-1.5">
+            🛵 Por Forma de Entrega
+          </h3>
+          <div class="flex justify-between items-center text-xs py-1 border-b border-gray-200/60">
+            <span class="text-gray-600">🏠 Delivery a Domicilio:</span>
+            <span id="stat-entrega-delivery" class="font-bold text-gray-900">0 ped. ($0)</span>
+          </div>
+          <div class="flex justify-between items-center text-xs py-1">
+            <span class="text-gray-600">🏪 Retiro en Local:</span>
+            <span id="stat-entrega-retiro" class="font-bold text-gray-900">0 ped. ($0)</span>
+          </div>
+        </div>
+
+        <!-- FORMA DE PAGO -->
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-2">
+          <h3 class="text-xs font-bold text-gray-700 uppercase tracking-wide border-b pb-1 flex items-center gap-1.5">
+            💳 Por Forma de Pago
+          </h3>
+          <div class="flex justify-between items-center text-xs py-1 border-b border-gray-200/60">
+            <span class="text-gray-600">💵 Efectivo:</span>
+            <span id="stat-pago-efectivo" class="font-bold text-gray-900">0 ped. ($0)</span>
+          </div>
+          <div class="flex justify-between items-center text-xs py-1">
+            <span class="text-gray-600">🏦 Transferencia / Alias:</span>
+            <span id="stat-pago-transferencia" class="font-bold text-gray-900">0 ped. ($0)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DESGLOSE POR PRODUCTOS VENDIDOS -->
+      <div class="space-y-3">
+        <h3 class="text-xs font-bold text-gray-700 uppercase tracking-wide">
+          🍗 Resumen de Ventas por Producto
+        </h3>
+        <div class="overflow-x-auto border rounded-lg max-h-60 overflow-y-auto">
+          <table class="w-full text-left text-xs text-gray-600">
+            <thead class="bg-gray-100 text-gray-800 font-bold sticky top-0 border-b">
+              <tr>
+                <th class="p-2.5 border-r">Producto</th>
+                <th class="p-2.5 border-r text-center">Unidades Vendidas</th>
+                <th class="p-2.5 text-right">Recaudación Total</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-resumen-productos" class="divide-y divide-gray-100">
+              <tr>
+                <td colspan="3" class="p-3 text-center text-gray-400 italic">Cargando métricas de productos...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- CONFIGURACIÓN DE PLANTILLA DE WHATSAPP DESDE ADMIN -->
     <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
       <div class="border-b pb-3">
@@ -470,76 +768,6 @@
         </div>
       </form>
     </div>
-
-    <!-- CREACIÓN DE USUARIOS -->
-    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6">
-      <div class="border-b pb-3">
-        <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
-          👑 Panel Administrador
-        </h2>
-        <p class="text-xs text-gray-500">Creación de accesos e inspección global del sistema.</p>
-      </div>
-
-      <form id="form-crear-usuario" onsubmit="crearUsuarioSistema(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">Usuario / Email</label>
-          <input type="text" id="user-nombre" required placeholder="ej: juan.perez@correo.com" class="w-full text-xs p-2 border rounded">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">Contraseña</label>
-          <input type="password" id="user-pass" required placeholder="••••••••" class="w-full text-xs p-2 border rounded">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">Rol / Nivel de Permisos</label>
-          <select id="user-rol" class="w-full text-xs p-2 border rounded bg-white">
-            <option value="delivery_general">🛵 Delivery (General - Acceso Completo)</option>
-            <option value="delivery_reparto">🛵 Delivery (Reparto - Restringido)</option>
-            <option value="disenador">🎨 Diseñador</option>
-            <option value="administrador">👑 Administrador</option>
-            <option value="cliente">🛍️ Cliente</option>
-          </select>
-        </div>
-        <div class="md:col-span-3">
-          <button type="submit" class="bg-red-700 hover:bg-red-800 text-white text-xs font-bold py-2.5 px-4 rounded shadow">
-            👤 Crear Nuevo Usuario
-          </button>
-        </div>
-      </form>
-    </div>
-
-    <!-- TABLA DE AUDITORÍA -->
-    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
-      <div class="border-b pb-2 flex justify-between items-center">
-        <div>
-          <h3 class="text-base font-bold text-gray-800 flex items-center gap-2">
-            📜 Registro de Auditoría y Modificaciones por Usuario
-          </h3>
-          <p class="text-xs text-gray-500">Historial de acciones registradas con firma de usuario y fecha.</p>
-        </div>
-        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full">
-          🟢 Tiempo Real
-        </span>
-      </div>
-
-      <div class="overflow-x-auto max-h-72 overflow-y-auto border rounded-lg">
-        <table class="w-full text-left text-xs text-gray-600">
-          <thead class="bg-gray-100 text-gray-800 font-bold sticky top-0 border-b">
-            <tr>
-              <th class="p-2.5 border-r">Fecha / Hora</th>
-              <th class="p-2.5 border-r">Usuario</th>
-              <th class="p-2.5 border-r">Rol</th>
-              <th class="p-2.5 border-r">Acción Realizada</th>
-              <th class="p-2.5">Detalles</th>
-            </tr>
-          </thead>
-          <tbody id="tabla-auditoria" class="divide-y divide-gray-100">
-            <tr>
-              <td colspan="5" class="p-4 text-center text-gray-400 italic">Cargando historial de modificaciones...</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
   </main>
 
   <!-- SCRIPTS Y LÓGICA CON FIREBASE -->
@@ -556,6 +784,7 @@
       onSnapshot, 
       doc, 
       getDoc,
+      getDocs,
       setDoc,
       updateDoc 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -614,10 +843,10 @@
     ];
 
     const baseUsuarios = JSON.parse(localStorage.getItem("polleria_rey_usuarios")) || [
-      { username: "hjs", pass: "hermesjs", nombre: "Administrador", rol: "administrador" },
-      { username: "Hermes", pass: "Hjs2154", nombre: "Diseñador", rol: "disenador" },
-      { username: "delivery_general", pass: "1234", nombre: "Delivery General", rol: "delivery_general" },
-      { username: "delivery_reparto", pass: "1234", nombre: "Repartidor", rol: "delivery_reparto" }
+      { username: "hjs", pass: "hermesjs", nombre: "Administrador", rol: "administrador", creadoPor: "sistema" },
+      { username: "Hermes", pass: "Hjs2154", nombre: "Diseñador", rol: "disenador", creadoPor: "sistema" },
+      { username: "delivery_general", pass: "1234", nombre: "Delivery General", rol: "delivery_general", creadoPor: "sistema" },
+      { username: "delivery_reparto", pass: "1234", nombre: "Repartidor", rol: "delivery_reparto", creadoPor: "sistema" }
     ];
 
     let productosCache = {};
@@ -629,6 +858,14 @@
     let aliasActual = "POLLERIA.REY.MP";
     let telefonoWhatsappActual = "5493564123456";
     let plantillaWhatsappActual = PLANTILLA_WHATSAPP_DEFECTO;
+
+    // Configuración de Puntos por Defecto
+    let configPuntos = {
+      activo: false,
+      pesos: 1000,
+      puntos: 10,
+      fechaExpiracion: ""
+    };
 
     actualizarBadgeUsuario();
 
@@ -660,6 +897,111 @@
       const areaPlantilla = document.getElementById("config-plantilla-wa");
       if (areaPlantilla) areaPlantilla.value = plantillaWhatsappActual;
     });
+
+    // 4. ESCUCHAR CONFIGURACIÓN DE PUNTOS DESDE FIRESTORE
+    onSnapshot(doc(db, "config", "puntos"), (docSnap) => {
+      if (docSnap.exists()) {
+        configPuntos = { ...configPuntos, ...docSnap.data() };
+      }
+      const checkActivo = document.getElementById("puntos-activo");
+      const inputPesos = document.getElementById("puntos-pesos");
+      const inputPuntos = document.getElementById("puntos-cantidad");
+      const inputFecha = document.getElementById("puntos-fecha-expiracion");
+
+      if (checkActivo) checkActivo.checked = Boolean(configPuntos.activo);
+      if (inputPesos) inputPesos.value = configPuntos.pesos || 1000;
+      if (inputPuntos) inputPuntos.value = configPuntos.puntos || 10;
+      if (inputFecha) inputFecha.value = configPuntos.fechaExpiracion || "";
+    });
+
+    // FUNCIONALIDADES EXCLUSIVAS DEL MODO DISEÑADOR
+    window.reiniciarPedidosCompletos = async () => {
+      if (!confirm("⚠️ ¿Estás seguro de que deseas ELIMINAR TODOS los pedidos registradas en la base de datos? Esta acción no se puede deshacer.")) return;
+      try {
+        const querySnapshot = await getDocs(collection(db, "orders"));
+        const deletePromises = querySnapshot.docs.map(d => deleteDoc(doc(db, "orders", d.id)));
+        await Promise.all(deletePromises);
+
+        await registrarAuditoria("Reinicio Total Pedidos", `Todos los pedidos (${querySnapshot.docs.length}) fueron reiniciados por el Diseñador ${usuarioActual.username}.`);
+        alert("¡Todos los pedidos han sido eliminados correctamente!");
+      } catch (err) {
+        console.error("Error al reiniciar pedidos:", err);
+        alert("Ocurrió un error al intentar eliminar los pedidos.");
+      }
+    };
+
+    window.reiniciarPedidosFinalizados = async () => {
+      if (!confirm("🧹 ¿Deseas eliminar únicamente los pedidos con estado Entregado o Cancelado?")) return;
+      try {
+        const querySnapshot = await getDocs(collection(db, "orders"));
+        let count = 0;
+        const deletePromises = [];
+
+        querySnapshot.docs.forEach(docSnap => {
+          const st = docSnap.data().estado;
+          if (st === "entregado" || st === "cancelado") {
+            deletePromises.push(deleteDoc(doc(db, "orders", docSnap.id)));
+            count++;
+          }
+        });
+
+        await Promise.all(deletePromises);
+        await registrarAuditoria("Limpieza Pedidos Finalizados", `Se eliminaron ${count} pedidos entregados/cancelados por ${usuarioActual.username}.`);
+        alert(`Se han eliminado ${count} pedidos finalizados.`);
+      } catch (err) {
+        console.error("Error al limpiar pedidos:", err);
+        alert("Ocurrió un error al limpiar los pedidos finalizados.");
+      }
+    };
+
+    window.reiniciarProductos = async () => {
+      if (!confirm("📦 ¿Deseas borrar el catálogo actual y restaurar los productos iniciales por defecto?")) return;
+      try {
+        const querySnapshot = await getDocs(collection(db, "products"));
+        const deletePromises = querySnapshot.docs.map(d => deleteDoc(doc(db, "products", d.id)));
+        await Promise.all(deletePromises);
+
+        for (const prod of PRODUCTOS_INICIALES) {
+          await addDoc(collection(db, "products"), {
+            ...prod,
+            creadoPor: usuarioActual.username,
+            creadoEn: serverTimestamp()
+          });
+        }
+
+        await registrarAuditoria("Reinicio Catálogo Productos", `Catálogo reseteado a productos por defecto por ${usuarioActual.username}.`);
+        alert("¡El catálogo de productos ha sido restablecido a su estado inicial!");
+      } catch (err) {
+        console.error("Error al reiniciar productos:", err);
+        alert("Error al restablecer los productos.");
+      }
+    };
+
+    // GUARDAR CONFIGURACIÓN DE PUNTOS EN FIRESTORE
+    window.guardarConfiguracionPuntos = async (e) => {
+      e.preventDefault();
+      const activo = document.getElementById("puntos-activo").checked;
+      const pesos = Number(document.getElementById("puntos-pesos").value);
+      const puntos = Number(document.getElementById("puntos-cantidad").value);
+      const fechaExpiracion = document.getElementById("puntos-fecha-expiracion").value;
+
+      try {
+        await setDoc(doc(db, "config", "puntos"), {
+          activo: activo,
+          pesos: pesos,
+          puntos: puntos,
+          fechaExpiracion: fechaExpiracion,
+          actualizadoPor: usuarioActual.username,
+          actualizadoEn: serverTimestamp()
+        }, { merge: true });
+
+        await registrarAuditoria("Modificación Sistema de Puntos", `Puntos ${activo ? 'Activados' : 'Desactivados'}: ${puntos} pts por $${pesos}. Expiración: ${fechaExpiracion || 'Sin caducidad'}.`);
+        alert("¡Configuración del sistema de puntos guardada correctamente!");
+      } catch (err) {
+        console.error("Error al guardar puntos:", err);
+        alert("Ocurrió un error al guardar la configuración de puntos.");
+      }
+    };
 
     // GUARDAR PLANTILLA DE WHATSAPP EN FIRESTORE (ADMIN)
     window.guardarPlantillaWhatsapp = async (e) => {
@@ -821,7 +1163,7 @@
       let encontrado = baseUsuarios.find(u => u.username.toLowerCase() === userIngresado.toLowerCase() && u.pass === passIngresado);
 
       if (!encontrado && userIngresado.includes("@")) {
-        encontrado = { username: userIngresado, pass: passIngresado, nombre: userIngresado, rol: "cliente" };
+        encontrado = { username: userIngresado, pass: passIngresado, nombre: userIngresado, rol: "cliente", creadoPor: "registro_directo" };
         baseUsuarios.push(encontrado);
         localStorage.setItem("polleria_rey_usuarios", JSON.stringify(baseUsuarios));
       }
@@ -875,6 +1217,8 @@
       const btnDel = document.getElementById("btn-tab-delivery");
       const btnDis = document.getElementById("btn-tab-disenador");
       const btnAdm = document.getElementById("btn-tab-admin");
+      const btnClientesCompras = document.getElementById("btn-tab-clientes-compras");
+      const btnPuntos = document.getElementById("btn-tab-puntos");
 
       const esDelivery = usuarioActual.rol === "delivery_general" || 
                          usuarioActual.rol === "delivery_reparto" || 
@@ -882,11 +1226,18 @@
 
       btnCli.style.display = "block";
       btnDel.style.display = (esDelivery || usuarioActual.rol === "administrador") ? "block" : "none";
-      btnDis.style.display = (usuarioActual.rol === "disenador" || usuarioActual.rol === "administrador") ? "block" : "none";
+      btnDis.style.display = (usuarioActual.rol === "disenador") ? "block" : "none";
       btnAdm.style.display = (usuarioActual.rol === "administrador") ? "block" : "none";
+      btnClientesCompras.style.display = (usuarioActual.rol === "administrador" || usuarioActual.rol === "disenador") ? "block" : "none";
+      btnPuntos.style.display = (usuarioActual.rol === "administrador" || usuarioActual.rol === "disenador") ? "block" : "none";
 
-      if (usuarioActual.rol === "administrador") mostrarVista("admin");
-      else if (usuarioActual.rol === "disenador") mostrarVista("disenador");
+      if (usuarioActual.rol === "administrador") {
+        mostrarVista("admin");
+      }
+      else if (usuarioActual.rol === "disenador") {
+        mostrarVista("disenador");
+        renderizarUsuariosCreados();
+      }
       else if (esDelivery) mostrarVista("delivery");
       else mostrarVista("cliente");
     }
@@ -896,11 +1247,15 @@
       document.getElementById("vista-delivery").classList.add("hidden");
       document.getElementById("vista-disenador").classList.add("hidden");
       document.getElementById("vista-admin").classList.add("hidden");
+      document.getElementById("vista-clientes-compras").classList.add("hidden");
+      document.getElementById("vista-puntos").classList.add("hidden");
 
       if (vista === "cliente") document.getElementById("vista-cliente").classList.remove("hidden");
       if (vista === "delivery") document.getElementById("vista-delivery").classList.remove("hidden");
       if (vista === "disenador") document.getElementById("vista-disenador").classList.remove("hidden");
       if (vista === "admin") document.getElementById("vista-admin").classList.remove("hidden");
+      if (vista === "clientes-compras") document.getElementById("vista-clientes-compras").classList.remove("hidden");
+      if (vista === "puntos") document.getElementById("vista-puntos").classList.remove("hidden");
     };
 
     async function registrarAuditoria(accion, detalle) {
@@ -1284,12 +1639,10 @@
         const horarioTexto = clienteData.esRetiroLocal ? `🕒 *Horario estimado de retiro:* ${clienteData.horarioPreferente}` : `🕒 *Horario preferente de entrega:* ${clienteData.horarioPreferente}`;
         const pagoTexto = clienteData.metodoPago === 'transferencia' ? `Transferencia (Alias: ${aliasActual})` : 'Efectivo';
         
-        // RECORDATORIO SI ELIGIÓ TRANSFERENCIA
         const recordatorioTransferencia = clienteData.metodoPago === 'transferencia' 
           ? "⚠️ *RECORDATORIO:* Por favor no olvides enviar el comprobante de transferencia por este medio para confirmar el pedido." 
           : "";
 
-        // CONSTRUCCIÓN DINÁMICA DE LA PLANTILLA
         let mensajeFinal = plantillaWhatsappActual
           .replace(/{ID}/g, idPedidoShort)
           .replace(/{CLIENTE}/g, clienteData.nombreCliente)
@@ -1302,7 +1655,6 @@
           .replace(/{DETALLE_PRODUCTOS}/g, resumenItems)
           .replace(/{TOTAL}/g, `$${clienteData.total.toLocaleString('es-AR')}`);
 
-        // Limpieza de saltos de línea dobles innecesarios si no hay recordatorio
         mensajeFinal = mensajeFinal.replace(/\n\s*\n\s*\n/g, '\n\n').trim();
 
         carrito = [];
@@ -1311,7 +1663,6 @@
         alternarModoEntrega(false);
         document.getElementById("alerta-alias-copiado").classList.add("hidden");
 
-        // REDIRECCIÓN A WHATSAPP
         window.location.href = `https://wa.me/${telefonoWhatsappActual}?text=${encodeURIComponent(mensajeFinal)}`;
 
       } catch (err) {
@@ -1373,21 +1724,207 @@
         esCargaInicial = false;
       }
 
+      const clientesMap = {};
+      const listaPedidos = [];
+
       snapshot.docs.forEach(docSnap => {
         const order = { id: docSnap.id, ...docSnap.data() };
+        listaPedidos.push(order);
         const colKey = order.estado || "pendiente";
 
         if (columnas[colKey]) {
           contadores[colKey]++;
           columnas[colKey].appendChild(crearTarjetaDelivery(order));
         }
+
+        // Agrupar datos para la sección de Registro de Clientes y Compras
+        const telKey = order.telefonoCliente || "sin_telefono";
+        if (!clientesMap[telKey]) {
+          clientesMap[telKey] = {
+            nombre: order.nombreCliente || "Cliente",
+            telefono: order.telefonoCliente || "N/A",
+            cantPedidos: 0,
+            totalConsumido: 0
+          };
+        }
+        clientesMap[telKey].cantPedidos += 1;
+        clientesMap[telKey].totalConsumido += (order.total || 0);
       });
 
       Object.keys(contadores).forEach(key => {
         const badge = document.getElementById(`cant-${key}`);
         if (badge) badge.innerText = contadores[key];
       });
+
+      renderizarClientesCompras(clientesMap);
+      actualizarResumenEstadisticosAdmin(listaPedidos);
     });
+
+    // LÓGICA DE CALCULO DE MÉTRICAS Y RESUMEN PARA MODO ADMINISTRADOR
+    function actualizarResumenEstadisticosAdmin(pedidos) {
+      const ahora = new Date();
+      
+      const inicioDia = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
+      
+      const diaSemana = ahora.getDay(); 
+      const diffPistas = ahora.getDate() - diaSemana + (diaSemana === 0 ? -6 : 1);
+      const inicioSemana = new Date(ahora.setDate(diffPistas));
+      inicioSemana.setHours(0,0,0,0);
+      
+      const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+      const inicioAnio = new Date(ahora.getFullYear(), 0, 1);
+
+      let statDia = { count: 0, total: 0 };
+      let statSemana = { count: 0, total: 0 };
+      let statMes = { count: 0, total: 0 };
+      let statAnio = { count: 0, total: 0 };
+
+      let statEntrega = { delivery: { count: 0, total: 0 }, retiro: { count: 0, total: 0 } };
+      let statPago = { efectivo: { count: 0, total: 0 }, transferencia: { count: 0, total: 0 } };
+
+      let productosVendidosMap = {};
+
+      pedidos.forEach(p => {
+        if (p.estado === "cancelado") return; // Excluir cancelados de métricas de ingreso
+
+        const fechaPedido = p.creadoEn ? new Date(p.creadoEn.seconds * 1000) : new Date();
+        const monto = Number(p.total || 0);
+
+        if (fechaPedido >= inicioDia) { statDia.count++; statDia.total += monto; }
+        if (fechaPedido >= inicioSemana) { statSemana.count++; statSemana.total += monto; }
+        if (fechaPedido >= inicioMes) { statMes.count++; statMes.total += monto; }
+        if (fechaPedido >= inicioAnio) { statAnio.count++; statAnio.total += monto; }
+
+        if (p.esRetiroLocal) {
+          statEntrega.retiro.count++;
+          statEntrega.retiro.total += monto;
+        } else {
+          statEntrega.delivery.count++;
+          statEntrega.delivery.total += monto;
+        }
+
+        if (p.metodoPago === "transferencia") {
+          statPago.transferencia.count++;
+          statPago.transferencia.total += monto;
+        } else {
+          statPago.efectivo.count++;
+          statPago.efectivo.total += monto;
+        }
+
+        if (p.items && Array.isArray(p.items)) {
+          p.items.forEach(it => {
+            const prodNombre = it.nombre || "Producto Indefinido";
+            if (!productosVendidosMap[prodNombre]) {
+              productosVendidosMap[prodNombre] = {
+                nombre: prodNombre,
+                icono: it.icono || "🍗",
+                unidades: 0,
+                recaudacion: 0
+              };
+            }
+            productosVendidosMap[prodNombre].unidades += Number(it.cantidad || 0);
+            productosVendidosMap[prodNombre].recaudacion += Number(it.cantidad || 0) * Number(it.precioUnitario || 0);
+          });
+        }
+      });
+
+      // Render en UI
+      document.getElementById("stat-dia-pedidos").innerText = `${statDia.count} ped.`;
+      document.getElementById("stat-dia-monto").innerText = `$${statDia.total.toLocaleString('es-AR')}`;
+
+      document.getElementById("stat-semana-pedidos").innerText = `${statSemana.count} ped.`;
+      document.getElementById("stat-semana-monto").innerText = `$${statSemana.total.toLocaleString('es-AR')}`;
+
+      document.getElementById("stat-mes-pedidos").innerText = `${statMes.count} ped.`;
+      document.getElementById("stat-mes-monto").innerText = `$${statMes.total.toLocaleString('es-AR')}`;
+
+      document.getElementById("stat-anio-pedidos").innerText = `${statAnio.count} ped.`;
+      document.getElementById("stat-anio-monto").innerText = `$${statAnio.total.toLocaleString('es-AR')}`;
+
+      document.getElementById("stat-entrega-delivery").innerText = `${statEntrega.delivery.count} ped. ($${statEntrega.delivery.total.toLocaleString('es-AR')})`;
+      document.getElementById("stat-entrega-retiro").innerText = `${statEntrega.retiro.count} ped. ($${statEntrega.retiro.total.toLocaleString('es-AR')})`;
+
+      document.getElementById("stat-pago-efectivo").innerText = `${statPago.efectivo.count} ped. ($${statPago.efectivo.total.toLocaleString('es-AR')})`;
+      document.getElementById("stat-pago-transferencia").innerText = `${statPago.transferencia.count} ped. ($${statPago.transferencia.total.toLocaleString('es-AR')})`;
+
+      // Tabla de productos en panel admin
+      const tbodyProd = document.getElementById("tabla-resumen-productos");
+      if (tbodyProd) {
+        tbodyProd.innerHTML = "";
+        const listaProdResumen = Object.values(productosVendidosMap).sort((a, b) => b.unidades - a.unidades);
+
+        if (listaProdResumen.length === 0) {
+          tbodyProd.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-gray-400 italic">No hay ventas registradas.</td></tr>`;
+        } else {
+          listaProdResumen.forEach(pr => {
+            tbodyProd.innerHTML += `
+              <tr class="hover:bg-gray-50 text-xs">
+                <td class="p-2.5 border-r font-bold text-gray-900 flex items-center gap-1.5">
+                  <span>${pr.icono}</span> ${pr.nombre}
+                </td>
+                <td class="p-2.5 border-r text-center font-black text-amber-800">${pr.unidades} u.</td>
+                <td class="p-2.5 text-right font-extrabold text-green-700">$${pr.recaudacion.toLocaleString('es-AR')}</td>
+              </tr>
+            `;
+          });
+        }
+      }
+    }
+
+    function renderizarClientesCompras(clientesMap) {
+      const tbody = document.getElementById("tabla-clientes-compras");
+      if (!tbody) return;
+
+      tbody.innerHTML = "";
+      const listaClientes = Object.values(clientesMap);
+
+      if (listaClientes.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400 italic">No hay registro de clientes aún.</td></tr>`;
+        return;
+      }
+
+      let puntosCaducados = false;
+      if (configPuntos.fechaExpiracion) {
+        const fechaHoy = new Date().toISOString().split('T')[0];
+        if (fechaHoy > configPuntos.fechaExpiracion) {
+          puntosCaducados = true;
+        }
+      }
+
+      listaClientes.forEach(cli => {
+        let puntosAcumulados = 0;
+
+        if (configPuntos.activo && !puntosCaducados && configPuntos.pesos > 0) {
+          puntosAcumulados = Math.floor(cli.totalConsumido / configPuntos.pesos) * configPuntos.puntos;
+        }
+
+        const telLimpio = cli.telefono.replace(/[^0-9]/g, "");
+
+        tbody.innerHTML += `
+          <tr class="hover:bg-gray-50 text-xs">
+            <td class="p-2.5 border-r font-bold text-gray-900">${cli.nombre}</td>
+            <td class="p-2.5 border-r text-gray-600 font-mono">${cli.telefono}</td>
+            <td class="p-2.5 border-r text-center font-bold text-amber-800">${cli.cantPedidos}</td>
+            <td class="p-2.5 border-r text-right font-extrabold text-green-700">$${cli.totalConsumido.toLocaleString('es-AR')}</td>
+            <td class="p-2.5 border-r text-center font-bold">
+              ${configPuntos.activo ? (puntosCaducados ? '<span class="text-red-500 text-[10px]">Caducados</span>' : `<span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">⭐ ${puntosAcumulados} pts</span>`) : '<span class="text-gray-400 text-[10px]">Inactivo</span>'}
+            </td>
+            <td class="p-2.5 text-center">
+              <button onclick="enviarPromocionWhatsapp('${telLimpio}', '${cli.nombre.replace(/'/g, "\\'")}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1 rounded text-[11px] shadow flex items-center justify-center gap-1 mx-auto">
+                💬 Oferta WhatsApp
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    window.enviarPromocionWhatsapp = (telefono, nombre) => {
+      const promoTexto = prompt(`Ingresa el mensaje promocional para ofrecer a ${nombre}:`, `¡Hola ${nombre}! 🔥 En Pollería REY tenemos promociones especiales para vos esta semana. ¡Consultanos!`);
+      if (promoTexto) {
+        window.open(`https://wa.me/${telefono}?text=${encodeURIComponent(promoTexto)}`, '_blank');
+      }
+    };
 
     function crearTarjetaDelivery(order) {
       const card = document.createElement("div");
@@ -1433,7 +1970,6 @@
       return card;
     }
 
-    // OPCIÓN B: CAMBIAR ESTADO Y NOTIFICAR AL CLIENTE POR WHATSAPP EN EL CLIENTE
     window.cambiarEstadoPedido = async (id, nuevoEstado, estadoAnterior) => {
       try {
         await updateDoc(doc(db, "orders", id), { 
@@ -1443,7 +1979,6 @@
 
         await registrarAuditoria("Cambio Estado Pedido", `Pedido #${id.slice(-5).toUpperCase()} movido de "${estadoAnterior}" a "${nuevoEstado}".`);
 
-        // NOTIFICACIÓN SI PASA A "EN CAMINO" (OPCIÓN B)
         if (nuevoEstado === "en_camino") {
           const docOrder = await getDoc(doc(db, "orders", id));
           if (docOrder.exists()) {
@@ -1474,13 +2009,43 @@
       const pass = document.getElementById("user-pass").value.trim();
       const rol = document.getElementById("user-rol").value;
 
-      baseUsuarios.push({ username: user, pass: pass, nombre: user, rol: rol });
+      baseUsuarios.push({ 
+        username: user, 
+        pass: pass, 
+        nombre: user, 
+        rol: rol,
+        creadoPor: usuarioActual.username 
+      });
       localStorage.setItem("polleria_rey_usuarios", JSON.stringify(baseUsuarios));
 
       await registrarAuditoria("Alta de Usuario", `Creado nuevo usuario "${user}" con rol [${rol}].`);
       alert(`Usuario ${user} creado con éxito.`);
       document.getElementById("form-crear-usuario").reset();
+      renderizarUsuariosCreados();
     };
+
+    function renderizarUsuariosCreados() {
+      const tbody = document.getElementById("tabla-usuarios-creados");
+      if (!tbody) return;
+
+      tbody.innerHTML = "";
+
+      if (baseUsuarios.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-gray-400 italic">No existen usuarios registrados.</td></tr>`;
+        return;
+      }
+
+      baseUsuarios.forEach(u => {
+        tbody.innerHTML += `
+          <tr class="hover:bg-gray-50 text-xs">
+            <td class="p-2 border-r font-bold text-gray-900">${u.username}</td>
+            <td class="p-2 border-r text-gray-600">${u.nombre}</td>
+            <td class="p-2 border-r font-semibold text-amber-800 capitalize">${u.rol}</td>
+            <td class="p-2 text-gray-500 font-mono text-[10px]">${u.creadoPor || 'sistema'}</td>
+          </tr>
+        `;
+      });
+    }
   </script>
 </body>
 </html>
