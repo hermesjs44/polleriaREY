@@ -55,6 +55,7 @@
       <button onclick="cerrarModalLogin()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 font-bold text-sm">✕</button>
 
       <div class="text-center mb-6">
+        <!-- LOGO DEL NEGOCIO -->
         <img src="https://polleria.imgix.net/sandbox/logo.jpg" alt="Pollería REY Logo" class="h-16 mx-auto mb-2 rounded border border-gray-200 shadow-sm object-contain bg-white p-1">
         <h2 class="text-2xl font-extrabold text-gray-900">Pollería REY</h2>
         <p class="text-xs text-gray-500 mt-1">Ingresa con tu correo o usuario para acceder</p>
@@ -85,6 +86,7 @@
   <header class="bg-red-700 text-white shadow-md">
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
       <div class="flex items-center gap-3">
+        <!-- LOGO DEL NEGOCIO -->
         <img src="https://polleria.imgix.net/sandbox/logo.jpg" alt="Pollería REY Logo" class="h-10 w-auto rounded border border-white/30 shadow-sm object-contain bg-white p-0.5">
         <h1 class="font-extrabold text-xl tracking-wide text-amber-300 drop-shadow">Pollería REY</h1>
       </div>
@@ -133,8 +135,18 @@
         </div>
 
         <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
-          🍗 Productos Destacados
+          🍗 Catálogo de Productos
         </h2>
+
+        <!-- SELECTOR / FILTRO DE CATEGORÍAS EN TIENDA -->
+        <div class="space-y-1">
+          <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide">Seleccionar Categoría:</label>
+          <div id="contenedor-filtro-categorias" class="flex flex-wrap gap-2 pb-2 border-b border-gray-200">
+            <button onclick="filtrarPorCategoria('Todas')" class="btn-filtro-cat bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow transition-colors">
+              Todas
+            </button>
+          </div>
+        </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="lista-productos">
           <div class="col-span-full text-center py-8 text-gray-400 text-xs italic">
@@ -143,7 +155,7 @@
         </div>
       </section>
 
-<!-- Carrito -->
+      <!-- Carrito -->
       <section id="seccion-carrito" class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between h-fit space-y-4">
         <h2 class="text-lg font-bold text-gray-800 border-b pb-2 flex justify-between items-center">
           🛒 Tu Carrito <span id="cant-items" class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full font-bold">0 items</span>
@@ -159,15 +171,6 @@
         </div>
 
         <form id="form-checkout" onsubmit="realizarPedido(event)" class="space-y-3 pt-2 border-t">
-          
-          <!-- Logo del Diseñador -->
-          <div class="flex items-center justify-center gap-2 py-1 bg-gray-50 rounded-lg border border-gray-100">
-            <img src="https://polleria.imgix.net/sandbox/logo%20hermes.jpg" 
-                 alt="Logo Diseñador" 
-                 class="h-10 w-auto object-contain rounded shadow-sm">
-            <span class="text-[10px] font-semibold text-gray-400">Diseño verificado</span>
-          </div>
-
           <h3 class="text-xs font-bold text-gray-500 uppercase">Datos para el Pedido</h3>
           
           <div>
@@ -225,6 +228,9 @@
           </button>
         </form>
       </section>
+
+    </div>
+  </main>
 
   <!-- VISTA: CLIENTES Y COMPRAS -->
   <main id="vista-clientes-compras" class="max-w-6xl mx-auto p-4 md:p-6 flex-1 w-full hidden space-y-6">
@@ -428,7 +434,7 @@
 
     </div>
 
-    <!-- FORMULARIO DE CREACIÓN DE USUARIOS (MOVIDO A DISEÑADOR) -->
+    <!-- FORMULARIO DE CREACIÓN DE USUARIOS -->
     <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6">
       <div class="border-b pb-3">
         <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
@@ -493,7 +499,7 @@
           <h2 id="titulo-form-producto" class="text-xl font-bold text-gray-800 flex items-center gap-2">
             🎨 Panel del Diseñador - Crear Producto
           </h2>
-          <p class="text-xs text-gray-500">Gestión de productos con imágenes almacenadas en Firebase Storage y base de datos Firestore.</p>
+          <p class="text-xs text-gray-500">Gestión de productos en la base de datos Firestore.</p>
         </div>
         <button id="btn-cancelar-edicion" onclick="cancelarEdicionProducto()" class="hidden bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-bold px-3 py-1.5 rounded transition-colors">
           ✕ Cancelar Edición
@@ -509,10 +515,10 @@
         </div>
         <div>
           <label class="block text-xs font-bold text-gray-700 mb-1">Categoría</label>
-          <select id="prod-categoria" class="w-full text-xs p-2 border rounded bg-white">
+          <select id="prod-categoria" class="select-categoria-dinamica w-full text-xs p-2 border rounded bg-white">
+            <option value="Ofertas">Ofertas</option>
             <option value="Pollería">Pollería</option>
             <option value="Despensa">Despensa</option>
-            <option value="Ofertas">Ofertas</option>
           </select>
         </div>
         <div>
@@ -536,31 +542,6 @@
               <option value="🔥">🔥 Oferta Especial</option>
               <option value="⭐">⭐ Destacado</option>
             </select>
-          </div>
-        </div>
-
-        <div class="md:col-span-2 bg-gray-50 p-3.5 rounded-lg border border-gray-200 space-y-3">
-          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide">Origen de la Imagen del Producto</label>
-          
-          <div class="flex flex-wrap gap-4 text-xs">
-            <label class="flex items-center gap-1.5 cursor-pointer font-bold text-gray-800">
-              <input type="radio" name="origen-imagen" value="archivo" checked onchange="alternarOrigenImagen('archivo')" class="text-red-600 focus:ring-red-500">
-              📁 Subir desde mi dispositivo (PC / Celular)
-            </label>
-            <label class="flex items-center gap-1.5 cursor-pointer font-bold text-gray-800">
-              <input type="radio" name="origen-imagen" value="url" onchange="alternarOrigenImagen('url')" class="text-red-600 focus:ring-red-500">
-              🔗 Usar enlace web (URL)
-            </label>
-          </div>
-
-          <div id="contenedor-img-archivo" class="space-y-1">
-            <input type="file" id="prod-imagen-archivo" accept="image/*" class="w-full text-xs p-1.5 border border-gray-300 rounded bg-white file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-bold file:bg-red-600 file:text-white hover:file:bg-red-700 cursor-pointer">
-            <p class="text-[10px] text-gray-500 italic">El archivo se guardará automáticamente en Firebase Storage.</p>
-          </div>
-
-          <div id="contenedor-img-url" class="hidden space-y-1">
-            <input type="url" id="prod-imagen-url" placeholder="https://ejemplo.com/imagen-pollo.jpg" class="w-full text-xs p-2 border border-gray-300 rounded bg-white">
-            <p class="text-[10px] text-gray-500 italic">Pega un enlace directo de imagen publicado en internet.</p>
           </div>
         </div>
 
@@ -601,7 +582,7 @@
       </div>
     </div>
 
-    <!-- TABLA DE AUDITORÍA (MOVIDA Y VISIBLE SOLO EN DISEÑADOR) -->
+    <!-- TABLA DE AUDITORÍA -->
     <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
       <div class="border-b pb-2 flex justify-between items-center">
         <div>
@@ -636,7 +617,7 @@
     </div>
   </main>
 
-  <!-- VISTA 4: ADMINISTRADOR (MENÚ RESUMEN DE VENTAS + PLANTILLA WA) -->
+  <!-- VISTA 4: ADMINISTRADOR (MENÚ RESUMEN DE VENTAS + GESTIÓN CATEGORÍAS + PLANTILLA WA) -->
   <main id="vista-admin" class="max-w-5xl mx-auto p-4 md:p-6 flex-1 w-full hidden space-y-6">
     
     <!-- MENÚ RESUMEN Y MÉTRICAS DE PEDIDOS (SOLO ADMIN) -->
@@ -737,6 +718,49 @@
       </div>
     </div>
 
+    <!-- GESTIÓN Y ADMINISTRACIÓN DE CATEGORÍAS (ADMIN) -->
+    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6">
+      <div class="border-b pb-3 flex justify-between items-center">
+        <div>
+          <h2 id="titulo-form-categoria" class="text-xl font-bold text-gray-800 flex items-center gap-2">
+            🏷️ Gestión de Categorías del Catálogo
+          </h2>
+          <p class="text-xs text-gray-500">Agrega, edita o elimina categorías para organizar los productos de la tienda.</p>
+        </div>
+        <button id="btn-cancelar-cat" onclick="cancelarEdicionCategoria()" class="hidden bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-bold px-3 py-1.5 rounded transition-colors">
+          ✕ Cancelar
+        </button>
+      </div>
+
+      <form id="form-categoria" onsubmit="guardarCategoria(event)" class="flex flex-col sm:flex-row gap-3 items-end">
+        <input type="hidden" id="cat-id-editar" value="">
+        <div class="flex-1 w-full">
+          <label class="block text-xs font-bold text-gray-700 mb-1">Nombre de la Categoría</label>
+          <input type="text" id="cat-nombre" required placeholder="Ej: Bebidas, Rotisería, Verdulería" class="w-full text-xs p-2.5 border rounded">
+        </div>
+        <button type="submit" id="btn-guardar-categoria" class="w-full sm:w-auto bg-red-700 hover:bg-red-800 text-white text-xs font-bold py-2.5 px-4 rounded shadow transition-colors">
+          ➕ Agregar Categoría
+        </button>
+      </form>
+
+      <div class="overflow-x-auto border rounded-lg max-h-52 overflow-y-auto">
+        <table class="w-full text-left text-xs text-gray-600">
+          <thead class="bg-gray-100 text-gray-800 font-bold sticky top-0 border-b">
+            <tr>
+              <th class="p-2.5 border-r">Categoría</th>
+              <th class="p-2.5 border-r text-center">Tipo</th>
+              <th class="p-2.5 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-categorias-admin" class="divide-y divide-gray-100">
+            <tr>
+              <td colspan="3" class="p-3 text-center text-gray-400 italic">Cargando categorías...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- CONFIGURACIÓN DE PLANTILLA DE WHATSAPP DESDE ADMIN -->
     <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
       <div class="border-b pb-3">
@@ -794,12 +818,6 @@
       setDoc,
       updateDoc 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { 
-      getStorage, 
-      ref, 
-      uploadBytes, 
-      getDownloadURL 
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBalo_rRUD2SAgzd1O1BNhm8jFN4Xz5w58",
@@ -813,7 +831,6 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const storage = getStorage(app);
 
     const PLANTILLA_WHATSAPP_DEFECTO = 
 `🍗 *NUEVO PEDIDO POLLERÍA REY #{ID}*
@@ -829,21 +846,21 @@
 
 💵 *Total:* {TOTAL}`;
 
+    const CATEGORIAS_INICIALES = ["Ofertas", "Pollería", "Despensa"];
+
     const PRODUCTOS_INICIALES = [
       {
         nombre: "Pollo Entero Fresco (1 kg)",
         categoria: "Pollería",
         precio: 3800,
         icono: "🍗",
-        imagen: "https://images.unsplash.com/photo-1587593810167-a84920ea0781?auto=format&fit=crop&w=600&q=80",
         descripcion: "Limpio, trozado o entero listo para cocinar."
       },
       {
         nombre: "Milanesas de Pechuga (1 kg)",
-        categoria: "Pollería",
+        categoria: "Ofertas",
         precio: 5200,
         icono: "🥩",
-        imagen: "https://images.unsplash.com/photo-1632778149955-e80f8ceca2e8?auto=format&fit=crop&w=600&q=80",
         descripcion: "Preparadas artesanalmente con pan rallado y especias."
       }
     ];
@@ -856,6 +873,7 @@
     ];
 
     let productosCache = {};
+    let categoriasCache = [];
     let usuarioActual = { username: "anonimo", nombre: "Anónimo", rol: "cliente" };
     let carrito = [];
     let sonidoHabilitado = false;
@@ -864,6 +882,7 @@
     let aliasActual = "POLLERIA.REY.MP";
     let telefonoWhatsappActual = "5493564123456";
     let plantillaWhatsappActual = PLANTILLA_WHATSAPP_DEFECTO;
+    let categoriaSeleccionadaFiltro = "Todas";
 
     // Configuración de Puntos por Defecto
     let configPuntos = {
@@ -874,6 +893,182 @@
     };
 
     actualizarBadgeUsuario();
+
+    // ESCUCHAR CATEGORÍAS EN TIEMPO REAL DESDE FIRESTORE
+    const qCategorias = query(collection(db, "categories"));
+    onSnapshot(qCategorias, async (snapshot) => {
+      if (snapshot.empty) {
+        for (const cat of CATEGORIAS_INICIALES) {
+          await addDoc(collection(db, "categories"), {
+            nombre: cat,
+            creadoEn: serverTimestamp()
+          });
+        }
+        return;
+      }
+
+      categoriasCache = [];
+      snapshot.docs.forEach(d => {
+        categoriasCache.push({ id: d.id, ...d.data() });
+      });
+
+      // Asegurar que Ofertas esté al inicio de la lista
+      categoriasCache.sort((a, b) => {
+        if (a.nombre.toLowerCase() === 'ofertas') return -1;
+        if (b.nombre.toLowerCase() === 'ofertas') return 1;
+        return a.nombre.localeCompare(b.nombre);
+      });
+
+      renderizarCategoriasUI();
+    });
+
+    function renderizarCategoriasUI() {
+      // 1. Renderizar en Filtros de la Tienda
+      const contFiltros = document.getElementById("contenedor-filtro-categorias");
+      if (contFiltros) {
+        let htmlFiltros = `
+          <button onclick="filtrarPorCategoria('Todas')" class="btn-filtro-cat ${categoriaSeleccionadaFiltro === 'Todas' ? 'bg-red-600 text-white font-bold' : 'bg-gray-200 text-gray-700 hover:bg-gray-300 font-semibold'} text-xs px-3.5 py-1.5 rounded-full shadow-sm transition-all">
+            🌟 Todas
+          </button>
+html
+        `;
+
+        categoriasCache.forEach(cat => {
+          const esSel = categoriaSeleccionadaFiltro === cat.nombre;
+          const esOferta = cat.nombre.toLowerCase() === "ofertas";
+          const claseBtn = esSel 
+            ? (esOferta ? 'bg-amber-500 text-white font-black ring-2 ring-amber-300' : 'bg-red-600 text-white font-bold') 
+            : (esOferta ? 'bg-amber-100 text-amber-900 border border-amber-300 hover:bg-amber-200 font-bold' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 font-semibold');
+
+          htmlFiltros += `
+            <button onclick="filtrarPorCategoria('${cat.nombre.replace(/'/g, "\\'")}')" class="btn-filtro-cat ${claseBtn} text-xs px-3.5 py-1.5 rounded-full shadow-sm transition-all flex items-center gap-1">
+              ${esOferta ? '🔥 ' : ''}${cat.nombre}
+            </button>
+          `;
+        });
+        contFiltros.innerHTML = htmlFiltros;
+      }
+
+      // 2. Renderizar en Select de Diseñador
+      const selectsCategoria = document.querySelectorAll(".select-categoria-dinamica");
+      selectsCategoria.forEach(selectEl => {
+        const valActual = selectEl.value;
+        selectEl.innerHTML = "";
+        categoriasCache.forEach(cat => {
+          selectEl.innerHTML += `<option value="${cat.nombre}">${cat.nombre}</option>`;
+        });
+        if (valActual && Array.from(selectEl.options).some(o => o.value === valActual)) {
+          selectEl.value = valActual;
+        }
+      });
+
+      // 3. Renderizar en Tabla del Admin
+      const tablaCatAdmin = document.getElementById("tabla-categorias-admin");
+      if (tablaCatAdmin) {
+        tablaCatAdmin.innerHTML = "";
+        categoriasCache.forEach(cat => {
+          const esOferta = cat.nombre.toLowerCase() === "ofertas";
+          tablaCatAdmin.innerHTML += `
+            <tr class="hover:bg-gray-50 text-xs">
+              <td class="p-2.5 border-r font-bold text-gray-900 flex items-center gap-1">
+                ${esOferta ? '🔥' : '🏷️'} ${cat.nombre}
+              </td>
+              <td class="p-2.5 border-r text-center">
+                <span class="${esOferta ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-700'} px-2 py-0.5 rounded text-[10px] font-bold">
+                  ${esOferta ? 'Sistema (Principal)' : 'Estándar'}
+                </span>
+              </td>
+              <td class="p-2.5 text-center space-x-1">
+                <button onclick="cargarCategoriaParaEditar('${cat.id}', '${cat.nombre.replace(/'/g, "\\'")}')" class="bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold px-2 py-1 rounded transition-colors text-[10px]">
+                  ✏️ Editar
+                </button>
+                ${!esOferta ? `
+                  <button onclick="eliminarCategoria('${cat.id}', '${cat.nombre.replace(/'/g, "\\'")}')" class="bg-red-100 hover:bg-red-200 text-red-700 font-bold px-2 py-1 rounded transition-colors text-[10px]">
+                    🗑️ Eliminar
+                  </button>
+                ` : '<span class="text-[10px] text-gray-400 italic">Fija</span>'}
+              </td>
+            </tr>
+          `;
+        });
+      }
+
+      // Re-renderizar productos al cambiar categorías para mantener filtros consistentes
+      renderizarProductosTienda();
+    }
+
+    window.filtrarPorCategoria = (catNombre) => {
+      categoriaSeleccionadaFiltro = catNombre;
+      renderizarCategoriasUI();
+    };
+
+    // FUNCIONES ADMINISTRACIÓN DE CATEGORÍAS
+    window.guardarCategoria = async (e) => {
+      e.preventDefault();
+      const idEditar = document.getElementById("cat-id-editar").value;
+      const nombreCat = document.getElementById("cat-nombre").value.trim();
+
+      if (!nombreCat) return;
+
+      try {
+        if (idEditar) {
+          await updateDoc(doc(db, "categories", idEditar), {
+            nombre: nombreCat,
+            modificadoPor: usuarioActual.username,
+            modificadoEn: serverTimestamp()
+          });
+          await registrarAuditoria("Modificación Categoría", `Categoría renombrada a "${nombreCat}" por ${usuarioActual.username}`);
+          alert("Categoría actualizada correctamente.");
+          cancelarEdicionCategoria();
+        } else {
+          // Verificar duplicado
+          const duplicado = categoriasCache.find(c => c.nombre.toLowerCase() === nombreCat.toLowerCase());
+          if (duplicado) return alert("Esa categoría ya existe.");
+
+          await addDoc(collection(db, "categories"), {
+            nombre: nombreCat,
+            creadoPor: usuarioActual.username,
+            creadoEn: serverTimestamp()
+          });
+          await registrarAuditoria("Creación Categoría", `Nueva categoría "${nombreCat}" agregada por ${usuarioActual.username}`);
+          alert("Categoría agregada correctamente.");
+          cancelarEdicionCategoria();
+        }
+      } catch (err) {
+        console.error("Error al guardar categoría:", err);
+        alert("Ocurrió un error al guardar la categoría.");
+      }
+    };
+
+    window.cargarCategoriaParaEditar = (id, nombre) => {
+      document.getElementById("cat-id-editar").value = id;
+      document.getElementById("cat-nombre").value = nombre;
+
+      document.getElementById("titulo-form-categoria").innerText = "✏️ Editar Categoría";
+      document.getElementById("btn-guardar-categoria").innerText = "💾 Guardar Cambios";
+      document.getElementById("btn-cancelar-cat").classList.remove("hidden");
+    };
+
+    window.cancelarEdicionCategoria = () => {
+      document.getElementById("form-categoria").reset();
+      document.getElementById("cat-id-editar").value = "";
+
+      document.getElementById("titulo-form-categoria").innerText = "🏷️ Gestión de Categorías del Catálogo";
+      document.getElementById("btn-guardar-categoria").innerText = "➕ Agregar Categoría";
+      document.getElementById("btn-cancelar-cat").classList.add("hidden");
+    };
+
+    window.eliminarCategoria = async (id, nombre) => {
+      if (!confirm(`¿Eliminar la categoría "${nombre}"? Los productos asignados a ella requerirán reasignación.`)) return;
+      try {
+        await deleteDoc(doc(db, "categories", id));
+        await registrarAuditoria("Eliminación Categoría", `Categoría "${nombre}" eliminada por ${usuarioActual.username}`);
+        alert("Categoría eliminada.");
+      } catch (err) {
+        console.error("Error al eliminar categoría:", err);
+        alert("Error al eliminar la categoría.");
+      }
+    };
 
     // 1. ESCUCHAR EL ALIAS DESDE FIRESTORE
     onSnapshot(doc(db, "config", "transferencia"), (docSnap) => {
@@ -1134,19 +1329,6 @@
       }
     };
 
-    window.alternarOrigenImagen = (tipo) => {
-      const contArchivo = document.getElementById("contenedor-img-archivo");
-      const contUrl = document.getElementById("contenedor-img-url");
-
-      if (tipo === "archivo") {
-        contArchivo.classList.remove("hidden");
-        contUrl.classList.add("hidden");
-      } else {
-        contArchivo.classList.add("hidden");
-        contUrl.classList.remove("hidden");
-      }
-    };
-
     window.abrirModalLogin = () => {
       document.getElementById("modal-login").classList.remove("hidden");
     };
@@ -1306,6 +1488,7 @@
       });
     });
 
+    // ESCUCHAR Y RENDERIZAR PRODUCTOS
     const qProducts = query(collection(db, "products"));
 
     onSnapshot(qProducts, async (snapshot) => {
@@ -1319,48 +1502,81 @@
         return;
       }
 
+      productosCache = {};
+      snapshot.docs.forEach(docSnap => {
+        const p = { id: docSnap.id, ...docSnap.data() };
+        productosCache[p.id] = p;
+      });
+
+      renderizarProductosTienda();
+    });
+
+    function renderizarProductosTienda() {
       const contenedorTienda = document.getElementById("lista-productos");
       const tablaDisenador = document.getElementById("tabla-productos-disenador");
       const cantProdBadge = document.getElementById("cant-productos-disenador");
 
       if (contenedorTienda) contenedorTienda.innerHTML = "";
       if (tablaDisenador) tablaDisenador.innerHTML = "";
-      if (cantProdBadge) cantProdBadge.innerText = `${snapshot.docs.length} productos`;
 
-      productosCache = {};
+      let listaProductos = Object.values(productosCache);
+      if (cantProdBadge) cantProdBadge.innerText = `${listaProductos.length} productos`;
 
-      snapshot.docs.forEach(docSnap => {
-        const p = { id: docSnap.id, ...docSnap.data() };
-        productosCache[p.id] = p;
-        const precioFormateado = Number(p.precio || 0).toLocaleString("es-AR");
+      // ORDENAR: Primero Ofertas, luego resto de productos
+      listaProductos.sort((a, b) => {
+        const aOferta = (a.categoria || '').toLowerCase() === 'ofertas';
+        const bOferta = (b.categoria || '').toLowerCase() === 'ofertas';
 
-        if (contenedorTienda) {
-          contenedorTienda.innerHTML += `
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition-shadow">
-              <div class="relative h-44 w-full bg-gray-100">
-                <img src="${p.imagen || 'https://images.unsplash.com/photo-1587593810167-a84920ea0781?auto=format&fit=crop&w=600&q=80'}" alt="${p.nombre}" class="w-full h-full object-cover">
-                <span class="absolute top-2 left-2 text-[10px] uppercase font-bold bg-red-600 text-white px-2 py-0.5 rounded shadow">${p.categoria || 'Pollería'}</span>
-                <span class="absolute top-2 right-2 text-xl bg-white/90 backdrop-blur-sm p-1.5 rounded-full shadow border border-gray-200" title="Ícono del Producto">${p.icono || '🍗'}</span>
-              </div>
-              <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
-                <div>
-                  <h3 class="font-bold text-gray-900 text-base flex items-center gap-1.5">
-                    <span>${p.icono || '🍗'}</span> ${p.nombre}
-                  </h3>
-                  <p class="text-xs text-gray-500 mt-1">${p.descripcion || 'Producto fresco de calidad superior.'}</p>
+        if (aOferta && !bOferta) return -1;
+        if (!aOferta && bOferta) return 1;
+        return (a.nombre || '').localeCompare(b.nombre || '');
+      });
+
+      // FILTRAR SI CORRESPONDE
+      let productosFiltrados = listaProductos;
+      if (categoriaSeleccionadaFiltro !== "Todas") {
+        productosFiltrados = listaProductos.filter(p => (p.categoria || '').toLowerCase() === categoriaSeleccionadaFiltro.toLowerCase());
+      }
+
+      if (contenedorTienda) {
+        if (productosFiltrados.length === 0) {
+          contenedorTienda.innerHTML = `<div class="col-span-full text-center py-8 text-gray-400 text-xs italic">No hay productos en esta categoría.</div>`;
+        } else {
+          productosFiltrados.forEach(p => {
+            const precioFormateado = Number(p.precio || 0).toLocaleString("es-AR");
+            const esOferta = (p.categoria || '').toLowerCase() === 'ofertas';
+
+            contenedorTienda.innerHTML += `
+              <div class="bg-white rounded-xl border ${esOferta ? 'border-amber-300 ring-1 ring-amber-200' : 'border-gray-200'} shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition-shadow">
+                <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="text-[10px] uppercase font-bold ${esOferta ? 'bg-amber-500' : 'bg-red-600'} text-white px-2 py-0.5 rounded shadow inline-block mb-2">
+                        ${esOferta ? '🔥 ' : ''}${p.categoria || 'Pollería'}
+                      </span>
+                      <h3 class="font-bold text-gray-900 text-base flex items-center gap-1.5">
+                        <span>${p.icono || '🍗'}</span> ${p.nombre}
+                      </h3>
+                      <p class="text-xs text-gray-500 mt-1">${p.descripcion || 'Producto fresco de calidad superior.'}</p>
+                    </div>
+                    <span class="text-2xl" title="Ícono del Producto">${p.icono || '🍗'}</span>
+                  </div>
+                  <div class="pt-2 flex justify-between items-center border-t border-gray-100">
+                    <span class="font-extrabold text-red-700 text-xl">$${precioFormateado}</span>
+                    <button onclick="agregarAlCarrito('${p.id}', '${p.nombre.replace(/'/g, "\\'")}', ${p.precio}, '${p.icono || '🍗'}')" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3.5 py-2 rounded-lg transition-colors shadow-sm flex items-center gap-1">
+                      🛒 + Agregar
+                    </button>
+                  </div>
                 </div>
-                <div class="pt-2 flex justify-between items-center border-t border-gray-100">
-                  <span class="font-extrabold text-red-700 text-xl">$${precioFormateado}</span>
-                  <button onclick="agregarAlCarrito('${p.id}', '${p.nombre.replace(/'/g, "\\'")}', ${p.precio}, '${p.icono || '🍗'}')" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3.5 py-2 rounded-lg transition-colors shadow-sm flex items-center gap-1">
-                    🛒 + Agregar
-                  </button>
-                </div>
               </div>
-            </div>
-          `;
+            `;
+          });
         }
+      }
 
-        if (tablaDisenador) {
+      if (tablaDisenador) {
+        listaProductos.forEach(p => {
+          const precioFormateado = Number(p.precio || 0).toLocaleString("es-AR");
           tablaDisenador.innerHTML += `
             <tr class="hover:bg-gray-50 text-[11px]">
               <td class="p-2 border-r text-center text-lg">${p.icono || '🍗'}</td>
@@ -1377,9 +1593,9 @@
               </td>
             </tr>
           `;
-        }
-      });
-    });
+        });
+      }
+    }
 
     window.cargarProductoParaEditar = (id) => {
       const prod = productosCache[id];
@@ -1391,21 +1607,6 @@
       document.getElementById("prod-precio").value = prod.precio || 0;
       document.getElementById("prod-desc").value = prod.descripcion || "";
       document.getElementById("prod-icono").value = prod.icono || "🍗";
-
-      if (prod.imagen && prod.imagen.startsWith("http")) {
-        const radios = document.getElementsByName("origen-imagen");
-        for (const radio of radios) {
-          if (radio.value === "url") radio.checked = true;
-        }
-        alternarOrigenImagen("url");
-        document.getElementById("prod-imagen-url").value = prod.imagen;
-      } else {
-        const radios = document.getElementsByName("origen-imagen");
-        for (const radio of radios) {
-          if (radio.value === "archivo") radio.checked = true;
-        }
-        alternarOrigenImagen("archivo");
-      }
 
       document.getElementById("titulo-form-producto").innerHTML = "✏️ Editar Producto Cargado";
       document.getElementById("btn-cancelar-edicion").classList.remove("hidden");
@@ -1428,8 +1629,6 @@
       const btnSubmit = document.getElementById("btn-guardar-producto");
       btnSubmit.innerHTML = "➕ Publicar Producto en Firebase";
       btnSubmit.className = "bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 px-4 rounded shadow flex items-center gap-2 transition-all";
-
-      alternarOrigenImagen("archivo");
     };
 
     window.guardarNuevoProducto = async (e) => {
@@ -1441,7 +1640,7 @@
       const btnSubmit = document.getElementById("btn-guardar-producto");
       const textoOriginal = btnSubmit.innerHTML;
       btnSubmit.disabled = true;
-      btnSubmit.innerHTML = esEdicion ? "⏳ Actualizando producto..." : "⏳ Subiendo imagen y guardando...";
+      btnSubmit.innerHTML = esEdicion ? "⏳ Actualizando producto..." : "⏳ Guardando...";
 
       try {
         const nombre = document.getElementById("prod-nombre").value.trim();
@@ -1450,25 +1649,6 @@
         const desc = document.getElementById("prod-desc").value.trim();
         const icono = document.getElementById("prod-icono").value.trim() || "🍗";
 
-        let imgUrl = esEdicion && productosCache[idEditar] ? productosCache[idEditar].imagen : "https://images.unsplash.com/photo-1587593810167-a84920ea0781?auto=format&fit=crop&w=600&q=80";
-
-        const origenImagen = document.querySelector('input[name="origen-imagen"]:checked').value;
-
-        if (origenImagen === "archivo") {
-          const fileInput = document.getElementById("prod-imagen-archivo");
-          if (fileInput.files.length > 0) {
-            const file = fileInput.files[0];
-            const storageRef = ref(storage, `productos/${Date.now()}_${file.name}`);
-            const snapshot = await uploadBytes(storageRef, file);
-            imgUrl = await getDownloadURL(snapshot.ref);
-          }
-        } else {
-          const urlInput = document.getElementById("prod-imagen-url").value.trim();
-          if (urlInput) {
-            imgUrl = urlInput;
-          }
-        }
-
         if (esEdicion) {
           await updateDoc(doc(db, "products", idEditar), {
             nombre: nombre,
@@ -1476,7 +1656,6 @@
             precio: precio,
             descripcion: desc,
             icono: icono,
-            imagen: imgUrl,
             modificadoPor: usuarioActual.username,
             modificadoEn: serverTimestamp()
           });
@@ -1491,7 +1670,6 @@
             precio: precio,
             descripcion: desc,
             icono: icono,
-            imagen: imgUrl,
             creadoPor: usuarioActual.username,
             creadoEn: serverTimestamp()
           });
@@ -1503,7 +1681,7 @@
 
       } catch (err) {
         console.error("Error al procesar el producto:", err);
-        alert("Ocurrió un error al procesar el producto o subir la imagen a Firebase.");
+        alert("Ocurrió un error al procesar el producto en Firebase.");
       } finally {
         btnSubmit.disabled = false;
         btnSubmit.innerHTML = textoOriginal;
@@ -1791,7 +1969,7 @@
       let productosVendidosMap = {};
 
       pedidos.forEach(p => {
-        if (p.estado === "cancelado") return; // Excluir cancelados de métricas de ingreso
+        if (p.estado === "cancelado") return;
 
         const fechaPedido = p.creadoEn ? new Date(p.creadoEn.seconds * 1000) : new Date();
         const monto = Number(p.total || 0);
@@ -2023,31 +2201,21 @@
         creadoPor: usuarioActual.username 
       });
       localStorage.setItem("polleria_rey_usuarios", JSON.stringify(baseUsuarios));
-
-      await registrarAuditoria("Alta de Usuario", `Creado nuevo usuario "${user}" con rol [${rol}].`);
-      alert(`Usuario ${user} creado con éxito.`);
-      document.getElementById("form-crear-usuario").reset();
+      alert("Usuario creado con éxito");
       renderizarUsuariosCreados();
     };
 
     function renderizarUsuariosCreados() {
       const tbody = document.getElementById("tabla-usuarios-creados");
       if (!tbody) return;
-
       tbody.innerHTML = "";
-
-      if (baseUsuarios.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-gray-400 italic">No existen usuarios registrados.</td></tr>`;
-        return;
-      }
-
       baseUsuarios.forEach(u => {
         tbody.innerHTML += `
           <tr class="hover:bg-gray-50 text-xs">
-            <td class="p-2 border-r font-bold text-gray-900">${u.username}</td>
-            <td class="p-2 border-r text-gray-600">${u.nombre}</td>
-            <td class="p-2 border-r font-semibold text-amber-800 capitalize">${u.rol}</td>
-            <td class="p-2 text-gray-500 font-mono text-[10px]">${u.creadoPor || 'sistema'}</td>
+            <td class="p-2 border-r font-bold">${u.username}</td>
+            <td class="p-2 border-r">${u.nombre}</td>
+            <td class="p-2 border-r"><span class="bg-gray-100 px-1.5 py-0.5 rounded font-semibold">${u.rol}</span></td>
+            <td class="p-2 text-gray-500">${u.creadoPor || 'sistema'}</td>
           </tr>
         `;
       });
