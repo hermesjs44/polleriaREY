@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pollería REY - Sistema de Gestión y Pedidos</title>
+  <title>Pollería REY - Sistema de Gestión y Pedidos v1.01.02</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -88,7 +88,10 @@
       <div class="flex items-center gap-3">
         <!-- LOGO DEL NEGOCIO -->
         <img src="https://polleria.imgix.net/sandbox/logo.jpg" alt="Pollería REY Logo" class="h-10 w-auto rounded border border-white/30 shadow-sm object-contain bg-white p-0.5">
-        <h1 class="font-extrabold text-xl tracking-wide text-amber-300 drop-shadow">Pollería REY</h1>
+        <div>
+          <h1 class="font-extrabold text-xl tracking-wide text-amber-300 drop-shadow">Pollería REY</h1>
+          <span class="text-[10px] font-mono bg-red-900/80 px-1.5 py-0.5 rounded text-amber-200 border border-red-600">v1.01.02</span>
+        </div>
       </div>
 
       <div id="user-badge" class="flex items-center gap-2 bg-red-800/90 px-3 py-1.5 rounded-lg text-xs border border-red-600">
@@ -2074,22 +2077,22 @@
       listaClientes.forEach(c => {
         let puntosAcumulados = 0;
         if (configPuntos.activo && configPuntos.pesos > 0) {
-          puntosAcumulados = Math.floor((c.totalConsumido / configPuntos.pesos) * configPuntos.puntos);
+          puntosAcumulados = Math.floor(c.totalConsumido / configPuntos.pesos) * configPuntos.puntos;
         }
 
-        const msjPromo = `Hola *${c.nombre}*! 🍗 Te escribimos de *Pollería REY*. ¡Queremos regalarte una oferta exclusiva en tu próxima compra!`;
-        const linkWa = `https://wa.me/${c.telefono.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(msjPromo)}`;
+        const msgWa = encodeURIComponent(`¡Hola ${c.nombre}! 🍗 Queremos agradecerte por tus compras en Pollería REY. Tenés acumulados ${puntosAcumulados} puntos para canjear por premios en tu próximo pedido.`);
+        const urlWa = `https://wa.me/${c.telefono.replace(/[^0-9]/g, '')}?text=${msgWa}`;
 
         tbody.innerHTML += `
           <tr class="hover:bg-gray-50 text-xs">
             <td class="p-2.5 border-r font-bold text-gray-900">${c.nombre}</td>
             <td class="p-2.5 border-r font-mono text-gray-600">${c.telefono}</td>
-            <td class="p-2.5 border-r text-center font-bold text-gray-800">${c.cantPedidos}</td>
-            <td class="p-2.5 border-r text-right font-extrabold text-red-700">$${c.totalConsumido.toLocaleString("es-AR")}</td>
+            <td class="p-2.5 border-r text-center font-bold text-gray-700">${c.cantPedidos}</td>
+            <td class="p-2.5 border-r text-right font-black text-red-700">$${c.totalConsumido.toLocaleString("es-AR")}</td>
             <td class="p-2.5 border-r text-center font-bold text-amber-600">⭐ ${puntosAcumulados} pts</td>
             <td class="p-2.5 text-center">
-              <a href="${linkWa}" target="_blank" class="bg-green-600 hover:bg-green-700 text-white font-bold px-2.5 py-1 rounded text-[10px] inline-flex items-center gap-1 shadow transition-colors">
-                💬 Enviar Promo WA
+              <a href="${urlWa}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1 rounded transition-colors text-[10px] inline-flex items-center gap-1">
+                💬 Promoción WhatsApp
               </a>
             </td>
           </tr>
@@ -2098,66 +2101,60 @@
     }
 
     function crearTarjetaDelivery(order) {
-      const card = document.createElement("div");
-      card.className = "bg-white p-3 rounded-lg border border-gray-200 shadow-sm space-y-2 text-xs relative";
+      const div = document.createElement("div");
+      div.className = "bg-white p-3 rounded-lg border border-gray-200 shadow-sm text-xs space-y-2";
 
       const idShort = order.id.slice(-5).toUpperCase();
-      const fecha = order.creadoEn ? new Date(order.creadoEn.seconds * 1000).toLocaleTimeString("es-AR", { hour: '2-digit', minute: '2-digit' }) : "Ahora";
-      const esRetiro = Boolean(order.esRetiroLocal);
+      const hora = order.creadoEn ? new Date(order.creadoEn.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+      const itemsHtml = (order.items || []).map(i => `<div class="flex justify-between"><span>${i.icono || '🍗'} ${i.cantidad}x ${i.nombre}</span><span class="font-bold">$${(i.precioUnitario * i.cantidad).toLocaleString('es-AR')}</span></div>`).join('');
 
-      let itemsHtml = (order.items || []).map(i => `<div class="flex justify-between"><span>${i.icono || '🍗'} ${i.cantidad}x ${i.nombre}</span><span class="font-semibold">$${(i.precioUnitario * i.cantidad).toLocaleString('es-AR')}</span></div>`).join("");
-
-      card.innerHTML = `
-        <div class="flex justify-between items-center border-b pb-1 font-bold">
-          <span class="text-red-700">#${idShort}</span>
-          <span class="text-gray-400 font-normal text-[10px]">${fecha} hs</span>
+      div.innerHTML = `
+        <div class="flex justify-between items-center border-b pb-1">
+          <span class="font-bold text-gray-800">#${idShort}</span>
+          <span class="text-[10px] text-gray-400 font-mono">${hora}</span>
         </div>
         <div>
-          <div class="font-bold text-gray-900">${order.nombreCliente || 'Cliente'}</div>
-          <div class="text-[11px] text-gray-500 font-mono">${order.telefonoCliente || ''}</div>
+          <div class="font-bold text-gray-900">${order.nombreCliente}</div>
+          <div class="text-[11px] text-gray-600 font-mono">${order.telefonoCliente}</div>
+          <div class="text-[11px] text-gray-700 mt-1 font-medium">${order.esRetiroLocal ? '🏪 Retiro en local' : '📍 ' + order.direccionEnvio}</div>
         </div>
-        <div class="bg-amber-50 p-1.5 rounded text-[11px] border border-amber-200 text-amber-900 font-medium">
-          ${esRetiro ? '🏪 <strong>Retiro en Local</strong>' : `📍 <strong>Envío:</strong> ${order.direccionEnvio}`}
-        </div>
-        <div class="text-[10px] text-gray-500">
-          🕒 <strong>Horario:</strong> ${order.horarioPreferente || 'No especificado'}
-        </div>
-        <div class="text-[11px] bg-gray-50 p-1 rounded border">
-          💳 <strong>Pago:</strong> ${order.metodoPago === 'transferencia' ? 'Transferencia' : 'Efectivo'}
-        </div>
-        <div class="space-y-1 text-[11px] border-t pt-1 text-gray-700">
+        <div class="bg-gray-50 p-1.5 rounded space-y-1 text-[11px]">
           ${itemsHtml}
         </div>
-        <div class="flex justify-between items-center border-t pt-1 font-extrabold text-sm text-gray-900">
+        <div class="flex justify-between items-center border-t pt-1 font-bold">
           <span>Total:</span>
-          <span class="text-red-700">$${(order.total || 0).toLocaleString('es-AR')}</span>
+          <span class="text-red-700 text-sm">$${(order.total || 0).toLocaleString('es-AR')}</span>
         </div>
-        ${order.observaciones ? `<div class="text-[10px] italic bg-yellow-50 p-1 rounded border border-yellow-200 text-yellow-800">📝 ${order.observaciones}</div>` : ''}
-
-        <div class="pt-2 border-t flex flex-col gap-1">
-          <label class="text-[10px] font-bold text-gray-500 uppercase">Cambiar Estado:</label>
-          <select onchange="cambiarEstadoPedido('${order.id}', this.value)" class="w-full text-xs p-1 border rounded bg-gray-50 font-semibold text-gray-700">
-            <option value="pendiente" ${order.estado === 'pendiente' ? 'selected' : ''}>🟡 Pendiente</option>
-            <option value="en_preparacion" ${order.estado === 'en_preparacion' ? 'selected' : ''}>🔵 En Preparación</option>
-            <option value="en_camino" ${order.estado === 'en_camino' ? 'selected' : ''}>🛵 En Camino</option>
-            <option value="entregado" ${order.estado === 'entregado' ? 'selected' : ''}>🟢 Entregado / Cobrado</option>
-            <option value="cancelado" ${order.estado === 'cancelado' ? 'selected' : ''}>🔴 Cancelado</option>
-          </select>
+        <div class="text-[10px] text-gray-500 italic">Pago: ${order.metodoPago}</div>
+        <div class="flex flex-wrap gap-1 pt-1 border-t">
+          ${renderizarBotonesEstado(order.id, order.estado)}
         </div>
       `;
+      return div;
+    }
 
-      return card;
+    function renderizarBotonesEstado(id, estadoActual) {
+      const estados = [
+        { id: "pendiente", label: "🟡 Pendiente", class: "bg-yellow-100 text-yellow-800 hover:bg-yellow-200" },
+        { id: "en_preparacion", label: "🔵 Preparar", class: "bg-blue-100 text-blue-800 hover:bg-blue-200" },
+        { id: "en_camino", label: "🛵 En Camino", class: "bg-purple-100 text-purple-800 hover:bg-purple-200" },
+        { id: "entregado", label: "🟢 Entregado", class: "bg-green-100 text-green-800 hover:bg-green-200" },
+        { id: "cancelado", label: "🔴 Cancelar", class: "bg-red-100 text-red-800 hover:bg-red-200" }
+      ];
+
+      return estados
+        .filter(e => e.id !== estadoActual)
+        .map(e => `<button onclick="cambiarEstadoPedido('${id}', '${e.id}')" class="${e.class} px-1.5 py-0.5 rounded text-[10px] font-bold transition-colors">${e.label}</button>`)
+        .join('');
     }
 
     window.cambiarEstadoPedido = async (id, nuevoEstado) => {
       try {
         await updateDoc(doc(db, "orders", id), {
           estado: nuevoEstado,
-          actualizadoPor: usuarioActual.username,
           actualizadoEn: serverTimestamp()
         });
-
-        await registrarAuditoria("Cambio Estado Pedido", `Pedido #${id.slice(-5).toUpperCase()} cambiado a estado "${nuevoEstado}" por ${usuarioActual.username}.`);
+        await registrarAuditoria("Cambio Estado Pedido", `Pedido #${id.slice(-5).toUpperCase()} cambiado a ${nuevoEstado} por ${usuarioActual.username}`);
       } catch (err) {
         console.error("Error al actualizar estado:", err);
       }
@@ -2172,14 +2169,14 @@
       if (!uNombre || !uPass) return;
 
       const existe = baseUsuarios.find(u => u.username.toLowerCase() === uNombre.toLowerCase());
-      if (existe) return alert("El nombre de usuario ya existe.");
+      if (existe) return alert("Ese usuario ya existe.");
 
       const nuevoU = { username: uNombre, pass: uPass, nombre: uNombre, rol: uRol, creadoPor: usuarioActual.username };
       baseUsuarios.push(nuevoU);
       localStorage.setItem("polleria_rey_usuarios", JSON.stringify(baseUsuarios));
 
-      registrarAuditoria("Creación Usuario", `Usuario "${uNombre}" con rol "${uRol}" creado por ${usuarioActual.username}.`);
-      alert(`Usuario ${uNombre} creado con éxito.`);
+      registrarAuditoria("Usuario Creado", `Nuevo usuario "${uNombre}" con rol ${uRol} creado por ${usuarioActual.username}`);
+      alert("Usuario creado exitosamente.");
       document.getElementById("form-crear-usuario").reset();
       renderizarUsuariosCreados();
     };
@@ -2192,15 +2189,14 @@
       baseUsuarios.forEach(u => {
         tbody.innerHTML += `
           <tr class="hover:bg-gray-50 text-xs">
-            <td class="p-2 border-r font-bold text-gray-900">${u.username}</td>
-            <td class="p-2 border-r">${u.nombre || 'Sin nombre'}</td>
-            <td class="p-2 border-r"><span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded font-bold">${u.rol}</span></td>
-            <td class="p-2 text-gray-500">${u.creadoPor || 'sistema'}</td>
+            <td class="p-2 border-r font-bold text-gray-800">${u.username}</td>
+            <td class="p-2 border-r text-gray-600">${u.nombre || 'N/A'}</td>
+            <td class="p-2 border-r"><span class="bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded font-semibold capitalize">${u.rol}</span></td>
+            <td class="p-2 text-gray-500 font-mono">${u.creadoPor || 'Sistema'}</td>
           </tr>
         `;
       });
     }
-
   </script>
 </body>
 </html>
