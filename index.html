@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+[source: 12]<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -157,6 +157,11 @@
 
       <!-- Carrito -->
       <section id="seccion-carrito" class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between h-fit space-y-4">
+        <!-- LOGO DEL DISEÑADOR -->
+        <div class="flex justify-center border-b pb-3">
+          <img src="https://polleria.imgix.net/sandbox/logo%20hermes.jpg" alt="Logo Diseñador" class="h-12 w-auto object-contain">
+        </div>
+
         <h2 class="text-lg font-bold text-gray-800 border-b pb-2 flex justify-between items-center">
           🛒 Tu Carrito <span id="cant-items" class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full font-bold">0 items</span>
         </h2>
@@ -930,7 +935,6 @@
           <button onclick="filtrarPorCategoria('Todas')" class="btn-filtro-cat ${categoriaSeleccionadaFiltro === 'Todas' ? 'bg-red-600 text-white font-bold' : 'bg-gray-200 text-gray-700 hover:bg-gray-300 font-semibold'} text-xs px-3.5 py-1.5 rounded-full shadow-sm transition-all">
             🌟 Todas
           </button>
-html
         `;
 
         categoriasCache.forEach(cat => {
@@ -2007,47 +2011,47 @@ html
               };
             }
             productosVendidosMap[prodNombre].unidades += Number(it.cantidad || 0);
-            productosVendidosMap[prodNombre].recaudacion += Number(it.cantidad || 0) * Number(it.precioUnitario || 0);
+            productosVendidosMap[prodNombre].recaudacion += (Number(it.precioUnitario || 0) * Number(it.cantidad || 0));
           });
         }
       });
 
-      // Render en UI
+      // Actualizar UI Métricas
       document.getElementById("stat-dia-pedidos").innerText = `${statDia.count} ped.`;
-      document.getElementById("stat-dia-monto").innerText = `$${statDia.total.toLocaleString('es-AR')}`;
+      document.getElementById("stat-dia-monto").innerText = `$${statDia.total.toLocaleString("es-AR")}`;
 
       document.getElementById("stat-semana-pedidos").innerText = `${statSemana.count} ped.`;
-      document.getElementById("stat-semana-monto").innerText = `$${statSemana.total.toLocaleString('es-AR')}`;
+      document.getElementById("stat-semana-monto").innerText = `$${statSemana.total.toLocaleString("es-AR")}`;
 
       document.getElementById("stat-mes-pedidos").innerText = `${statMes.count} ped.`;
-      document.getElementById("stat-mes-monto").innerText = `$${statMes.total.toLocaleString('es-AR')}`;
+      document.getElementById("stat-mes-monto").innerText = `$${statMes.total.toLocaleString("es-AR")}`;
 
       document.getElementById("stat-anio-pedidos").innerText = `${statAnio.count} ped.`;
-      document.getElementById("stat-anio-monto").innerText = `$${statAnio.total.toLocaleString('es-AR')}`;
+      document.getElementById("stat-anio-monto").innerText = `$${statAnio.total.toLocaleString("es-AR")}`;
 
-      document.getElementById("stat-entrega-delivery").innerText = `${statEntrega.delivery.count} ped. ($${statEntrega.delivery.total.toLocaleString('es-AR')})`;
-      document.getElementById("stat-entrega-retiro").innerText = `${statEntrega.retiro.count} ped. ($${statEntrega.retiro.total.toLocaleString('es-AR')})`;
+      document.getElementById("stat-entrega-delivery").innerText = `${statEntrega.delivery.count} ped. ($${statEntrega.delivery.total.toLocaleString("es-AR")})`;
+      document.getElementById("stat-entrega-retiro").innerText = `${statEntrega.retiro.count} ped. ($${statEntrega.retiro.total.toLocaleString("es-AR")})`;
 
-      document.getElementById("stat-pago-efectivo").innerText = `${statPago.efectivo.count} ped. ($${statPago.efectivo.total.toLocaleString('es-AR')})`;
-      document.getElementById("stat-pago-transferencia").innerText = `${statPago.transferencia.count} ped. ($${statPago.transferencia.total.toLocaleString('es-AR')})`;
+      document.getElementById("stat-pago-efectivo").innerText = `${statPago.efectivo.count} ped. ($${statPago.efectivo.total.toLocaleString("es-AR")})`;
+      document.getElementById("stat-pago-transferencia").innerText = `${statPago.transferencia.count} ped. ($${statPago.transferencia.total.toLocaleString("es-AR")})`;
 
-      // Tabla de productos en panel admin
-      const tbodyProd = document.getElementById("tabla-resumen-productos");
-      if (tbodyProd) {
-        tbodyProd.innerHTML = "";
-        const listaProdResumen = Object.values(productosVendidosMap).sort((a, b) => b.unidades - a.unidades);
+      // Renderizar Tabla Resumen de Productos
+      const tbodyProds = document.getElementById("tabla-resumen-productos");
+      if (tbodyProds) {
+        tbodyProds.innerHTML = "";
+        const listaProds = Object.values(productosVendidosMap).sort((a,b) => b.unidades - a.unidades);
 
-        if (listaProdResumen.length === 0) {
-          tbodyProd.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-gray-400 italic">No hay ventas registradas.</td></tr>`;
+        if (listaProds.length === 0) {
+          tbodyProds.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-gray-400 italic">No hay ventas registradas aún.</td></tr>`;
         } else {
-          listaProdResumen.forEach(pr => {
-            tbodyProd.innerHTML += `
+          listaProds.forEach(p => {
+            tbodyProds.innerHTML += `
               <tr class="hover:bg-gray-50 text-xs">
                 <td class="p-2.5 border-r font-bold text-gray-900 flex items-center gap-1.5">
-                  <span>${pr.icono}</span> ${pr.nombre}
+                  <span>${p.icono}</span> ${p.nombre}
                 </td>
-                <td class="p-2.5 border-r text-center font-black text-amber-800">${pr.unidades} u.</td>
-                <td class="p-2.5 text-right font-extrabold text-green-700">$${pr.recaudacion.toLocaleString('es-AR')}</td>
+                <td class="p-2.5 border-r text-center font-bold text-gray-700">${p.unidades} u.</td>
+                <td class="p-2.5 text-right font-extrabold text-red-700">$${p.recaudacion.toLocaleString("es-AR")}</td>
               </tr>
             `;
           });
@@ -2063,163 +2067,140 @@ html
       const listaClientes = Object.values(clientesMap);
 
       if (listaClientes.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400 italic">No hay registro de clientes aún.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400 italic">No hay registros de clientes aún.</td></tr>`;
         return;
       }
 
-      let puntosCaducados = false;
-      if (configPuntos.fechaExpiracion) {
-        const fechaHoy = new Date().toISOString().split('T')[0];
-        if (fechaHoy > configPuntos.fechaExpiracion) {
-          puntosCaducados = true;
-        }
-      }
-
-      listaClientes.forEach(cli => {
+      listaClientes.forEach(c => {
         let puntosAcumulados = 0;
-
-        if (configPuntos.activo && !puntosCaducados && configPuntos.pesos > 0) {
-          puntosAcumulados = Math.floor(cli.totalConsumido / configPuntos.pesos) * configPuntos.puntos;
+        if (configPuntos.activo && configPuntos.pesos > 0) {
+          puntosAcumulados = Math.floor((c.totalConsumido / configPuntos.pesos) * configPuntos.puntos);
         }
 
-        const telLimpio = cli.telefono.replace(/[^0-9]/g, "");
+        const msjPromo = `Hola *${c.nombre}*! 🍗 Te escribimos de *Pollería REY*. ¡Queremos regalarte una oferta exclusiva en tu próxima compra!`;
+        const linkWa = `https://wa.me/${c.telefono.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(msjPromo)}`;
 
         tbody.innerHTML += `
           <tr class="hover:bg-gray-50 text-xs">
-            <td class="p-2.5 border-r font-bold text-gray-900">${cli.nombre}</td>
-            <td class="p-2.5 border-r text-gray-600 font-mono">${cli.telefono}</td>
-            <td class="p-2.5 border-r text-center font-bold text-amber-800">${cli.cantPedidos}</td>
-            <td class="p-2.5 border-r text-right font-extrabold text-green-700">$${cli.totalConsumido.toLocaleString('es-AR')}</td>
-            <td class="p-2.5 border-r text-center font-bold">
-              ${configPuntos.activo ? (puntosCaducados ? '<span class="text-red-500 text-[10px]">Caducados</span>' : `<span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">⭐ ${puntosAcumulados} pts</span>`) : '<span class="text-gray-400 text-[10px]">Inactivo</span>'}
-            </td>
+            <td class="p-2.5 border-r font-bold text-gray-900">${c.nombre}</td>
+            <td class="p-2.5 border-r font-mono text-gray-600">${c.telefono}</td>
+            <td class="p-2.5 border-r text-center font-bold text-gray-800">${c.cantPedidos}</td>
+            <td class="p-2.5 border-r text-right font-extrabold text-red-700">$${c.totalConsumido.toLocaleString("es-AR")}</td>
+            <td class="p-2.5 border-r text-center font-bold text-amber-600">⭐ ${puntosAcumulados} pts</td>
             <td class="p-2.5 text-center">
-              <button onclick="enviarPromocionWhatsapp('${telLimpio}', '${cli.nombre.replace(/'/g, "\\'")}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1 rounded text-[11px] shadow flex items-center justify-center gap-1 mx-auto">
-                💬 Oferta WhatsApp
-              </button>
+              <a href="${linkWa}" target="_blank" class="bg-green-600 hover:bg-green-700 text-white font-bold px-2.5 py-1 rounded text-[10px] inline-flex items-center gap-1 shadow transition-colors">
+                💬 Enviar Promo WA
+              </a>
             </td>
           </tr>
         `;
       });
     }
 
-    window.enviarPromocionWhatsapp = (telefono, nombre) => {
-      const promoTexto = prompt(`Ingresa el mensaje promocional para ofrecer a ${nombre}:`, `¡Hola ${nombre}! 🔥 En Pollería REY tenemos promociones especiales para vos esta semana. ¡Consultanos!`);
-      if (promoTexto) {
-        window.open(`https://wa.me/${telefono}?text=${encodeURIComponent(promoTexto)}`, '_blank');
-      }
-    };
-
     function crearTarjetaDelivery(order) {
       const card = document.createElement("div");
-      card.className = "bg-white p-3 rounded-lg border border-gray-200 shadow-sm text-xs space-y-2 flex flex-col justify-between";
+      card.className = "bg-white p-3 rounded-lg border border-gray-200 shadow-sm space-y-2 text-xs relative";
 
-      const itemsHTML = order.items
-        ? order.items.map(i => `<div class="flex justify-between"><span>${i.icono || '🍗'} <strong>${i.cantidad}x</strong> ${i.nombre}</span><span>$${i.precioUnitario * i.cantidad}</span></div>`).join("")
-        : "";
+      const idShort = order.id.slice(-5).toUpperCase();
+      const fecha = order.creadoEn ? new Date(order.creadoEn.seconds * 1000).toLocaleTimeString("es-AR", { hour: '2-digit', minute: '2-digit' }) : "Ahora";
+      const esRetiro = Boolean(order.esRetiroLocal);
 
-      const esReparto = usuarioActual.rol === "delivery_reparto";
-      const estaEntregado = order.estado === "entregado";
-
-      const selectDeshabilitado = (esReparto && estaEntregado) ? "disabled" : "";
-
-      const modoTextoTarjeta = order.esRetiroLocal ? "🏪 <strong>RETIRO EN LOCAL</strong>" : `📍 ${order.direccionEnvio}`;
+      let itemsHtml = (order.items || []).map(i => `<div class="flex justify-between"><span>${i.icono || '🍗'} ${i.cantidad}x ${i.nombre}</span><span class="font-semibold">$${(i.precioUnitario * i.cantidad).toLocaleString('es-AR')}</span></div>`).join("");
 
       card.innerHTML = `
-        <div class="flex justify-between font-bold border-b pb-1">
-          <span class="text-gray-400 font-mono">#${order.id.slice(-5).toUpperCase()}</span>
-          <span class="text-red-700 font-extrabold">$${order.total}</span>
+        <div class="flex justify-between items-center border-b pb-1 font-bold">
+          <span class="text-red-700">#${idShort}</span>
+          <span class="text-gray-400 font-normal text-[10px]">${fecha} hs</span>
         </div>
-        <div class="space-y-0.5">
-          <p class="font-bold text-gray-900">${order.nombreCliente}</p>
-          <p class="text-gray-600 truncate">${modoTextoTarjeta}</p>
-          <p class="text-[10px] text-amber-800 font-bold bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">🕒 Horario: ${order.horarioPreferente || 'Sin preferencia'}</p>
-          <p class="text-[10px] text-gray-500">💳 Pago: ${order.metodoPago === 'transferencia' ? 'Transferencia' : 'Efectivo'}</p>
-          ${order.observaciones && order.observaciones !== 'Sin observaciones' ? `<p class="text-[10px] text-red-700 font-semibold bg-red-50 p-1 rounded border border-red-100">📝 Note: ${order.observaciones}</p>` : ''}
+        <div>
+          <div class="font-bold text-gray-900">${order.nombreCliente || 'Cliente'}</div>
+          <div class="text-[11px] text-gray-500 font-mono">${order.telefonoCliente || ''}</div>
         </div>
-        <div class="bg-gray-50 p-2 rounded text-[11px] space-y-1 border">
-          ${itemsHTML}
+        <div class="bg-amber-50 p-1.5 rounded text-[11px] border border-amber-200 text-amber-900 font-medium">
+          ${esRetiro ? '🏪 <strong>Retiro en Local</strong>' : `📍 <strong>Envío:</strong> ${order.direccionEnvio}`}
         </div>
-        <div class="pt-1 flex flex-col gap-1">
-          <label class="text-[10px] text-gray-500 font-bold">Cambiar Estado:</label>
-          <select ${selectDeshabilitado} onchange="cambiarEstadoPedido('${order.id}', this.value, '${order.estado}')" class="w-full text-[11px] p-1 border rounded bg-gray-50 disabled:bg-gray-200 disabled:cursor-not-allowed">
-            <option value="pendiente" ${order.estado === 'pendiente' ? 'selected' : ''} ${esReparto ? 'disabled' : ''}>Pendiente</option>
-            <option value="en_preparacion" ${order.estado === 'en_preparacion' ? 'selected' : ''} ${esReparto ? 'disabled' : ''}>En Preparación</option>
+        <div class="text-[10px] text-gray-500">
+          🕒 <strong>Horario:</strong> ${order.horarioPreferente || 'No especificado'}
+        </div>
+        <div class="text-[11px] bg-gray-50 p-1 rounded border">
+          💳 <strong>Pago:</strong> ${order.metodoPago === 'transferencia' ? 'Transferencia' : 'Efectivo'}
+        </div>
+        <div class="space-y-1 text-[11px] border-t pt-1 text-gray-700">
+          ${itemsHtml}
+        </div>
+        <div class="flex justify-between items-center border-t pt-1 font-extrabold text-sm text-gray-900">
+          <span>Total:</span>
+          <span class="text-red-700">$${(order.total || 0).toLocaleString('es-AR')}</span>
+        </div>
+        ${order.observaciones ? `<div class="text-[10px] italic bg-yellow-50 p-1 rounded border border-yellow-200 text-yellow-800">📝 ${order.observaciones}</div>` : ''}
+
+        <div class="pt-2 border-t flex flex-col gap-1">
+          <label class="text-[10px] font-bold text-gray-500 uppercase">Cambiar Estado:</label>
+          <select onchange="cambiarEstadoPedido('${order.id}', this.value)" class="w-full text-xs p-1 border rounded bg-gray-50 font-semibold text-gray-700">
+            <option value="pendiente" ${order.estado === 'pendiente' ? 'selected' : ''}>🟡 Pendiente</option>
+            <option value="en_preparacion" ${order.estado === 'en_preparacion' ? 'selected' : ''}>🔵 En Preparación</option>
             <option value="en_camino" ${order.estado === 'en_camino' ? 'selected' : ''}>🛵 En Camino</option>
-            <option value="entregado" ${order.estado === 'entregado' ? 'selected' : ''}>🟢 Entregado y Cobrado</option>
-            <option value="cancelado" ${order.estado === 'cancelado' ? 'selected' : ''} ${esReparto ? 'disabled' : ''}>🔴 Cancelar</option>
+            <option value="entregado" ${order.estado === 'entregado' ? 'selected' : ''}>🟢 Entregado / Cobrado</option>
+            <option value="cancelado" ${order.estado === 'cancelado' ? 'selected' : ''}>🔴 Cancelado</option>
           </select>
         </div>
       `;
+
       return card;
     }
 
-    window.cambiarEstadoPedido = async (id, nuevoEstado, estadoAnterior) => {
+    window.cambiarEstadoPedido = async (id, nuevoEstado) => {
       try {
-        await updateDoc(doc(db, "orders", id), { 
+        await updateDoc(doc(db, "orders", id), {
           estado: nuevoEstado,
-          ultimoModificadoPor: usuarioActual.username
+          actualizadoPor: usuarioActual.username,
+          actualizadoEn: serverTimestamp()
         });
 
-        await registrarAuditoria("Cambio Estado Pedido", `Pedido #${id.slice(-5).toUpperCase()} movido de "${estadoAnterior}" a "${nuevoEstado}".`);
-
-        if (nuevoEstado === "en_camino") {
-          const docOrder = await getDoc(doc(db, "orders", id));
-          if (docOrder.exists()) {
-            const dataOrder = docOrder.data();
-            
-            if (dataOrder.telefonoCliente) {
-              const telLimpio = dataOrder.telefonoCliente.replace(/[^0-9]/g, "");
-              const idShort = id.slice(-5).toUpperCase();
-              const mensajeWa = `Hola ${dataOrder.nombreCliente}! 🛵 Tu pedido #${idShort} de Pollería REY ya se encuentra en camino a tu domicilio.`;
-              
-              const deseaNotificar = confirm(`El pedido #${idShort} pasó a EN CAMINO.\n\n¿Deseas enviar una notificación de WhatsApp al usuario registrado (${dataOrder.nombreCliente})?`);
-              
-              if (deseaNotificar) {
-                window.open(`https://wa.me/${telLimpio}?text=${encodeURIComponent(mensajeWa)}`, '_blank');
-              }
-            }
-          }
-        }
+        await registrarAuditoria("Cambio Estado Pedido", `Pedido #${id.slice(-5).toUpperCase()} cambiado a estado "${nuevoEstado}" por ${usuarioActual.username}.`);
       } catch (err) {
-        console.error(err);
-        alert("Error al actualizar el estado del pedido.");
+        console.error("Error al actualizar estado:", err);
       }
     };
 
-    window.crearUsuarioSistema = async (e) => {
+    window.crearUsuarioSistema = (e) => {
       e.preventDefault();
-      const user = document.getElementById("user-nombre").value.trim();
-      const pass = document.getElementById("user-pass").value.trim();
-      const rol = document.getElementById("user-rol").value;
+      const uNombre = document.getElementById("user-nombre").value.trim();
+      const uPass = document.getElementById("user-pass").value.trim();
+      const uRol = document.getElementById("user-rol").value;
 
-      baseUsuarios.push({ 
-        username: user, 
-        pass: pass, 
-        nombre: user, 
-        rol: rol,
-        creadoPor: usuarioActual.username 
-      });
+      if (!uNombre || !uPass) return;
+
+      const existe = baseUsuarios.find(u => u.username.toLowerCase() === uNombre.toLowerCase());
+      if (existe) return alert("El nombre de usuario ya existe.");
+
+      const nuevoU = { username: uNombre, pass: uPass, nombre: uNombre, rol: uRol, creadoPor: usuarioActual.username };
+      baseUsuarios.push(nuevoU);
       localStorage.setItem("polleria_rey_usuarios", JSON.stringify(baseUsuarios));
-      alert("Usuario creado con éxito");
+
+      registrarAuditoria("Creación Usuario", `Usuario "${uNombre}" con rol "${uRol}" creado por ${usuarioActual.username}.`);
+      alert(`Usuario ${uNombre} creado con éxito.`);
+      document.getElementById("form-crear-usuario").reset();
       renderizarUsuariosCreados();
     };
 
     function renderizarUsuariosCreados() {
       const tbody = document.getElementById("tabla-usuarios-creados");
       if (!tbody) return;
+
       tbody.innerHTML = "";
       baseUsuarios.forEach(u => {
         tbody.innerHTML += `
           <tr class="hover:bg-gray-50 text-xs">
-            <td class="p-2 border-r font-bold">${u.username}</td>
-            <td class="p-2 border-r">${u.nombre}</td>
-            <td class="p-2 border-r"><span class="bg-gray-100 px-1.5 py-0.5 rounded font-semibold">${u.rol}</span></td>
+            <td class="p-2 border-r font-bold text-gray-900">${u.username}</td>
+            <td class="p-2 border-r">${u.nombre || 'Sin nombre'}</td>
+            <td class="p-2 border-r"><span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded font-bold">${u.rol}</span></td>
             <td class="p-2 text-gray-500">${u.creadoPor || 'sistema'}</td>
           </tr>
         `;
       });
     }
+
   </script>
 </body>
 </html>
