@@ -119,7 +119,7 @@
           ⭐ Puntos
         </button>
         <button id="btn-tab-disenador" onclick="mostrarVista('disenador')" class="tab-btn px-3 py-1.5 rounded-md text-red-100 hover:bg-red-800 hidden">
-          🎨 Diseñador
+          🎨 Gestión Productos
         </button>
         <button id="btn-tab-admin" onclick="mostrarVista('admin')" class="tab-btn px-3 py-1.5 rounded-md text-red-100 hover:bg-red-800 hidden">
           👑 Panel Admin
@@ -382,9 +382,40 @@
     </div>
   </main>
 
-  <!-- VISTA 3: DISEÑADOR -->
+  <!-- VISTA 3: DISEÑADOR / GESTIÓN DE PRODUCTOS -->
   <main id="vista-disenador" class="max-w-5xl mx-auto p-4 md:p-6 flex-1 w-full hidden space-y-6">
     
+    <!-- MODULO DE CONTROL DE PERMISOS POR CATEGORÍA DE USUARIO (SOLO DISEÑADOR) -->
+    <div class="bg-white p-6 rounded-xl border border-amber-300 shadow-sm space-y-4">
+      <div class="border-b border-amber-200 pb-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+        <div>
+          <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+            🛡️ Configuración de Permisos por Categoría de Usuario
+          </h2>
+          <p class="text-xs text-gray-500">Habilita o deshabilita funciones específicas para cada rol del sistema en tiempo real.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <label class="text-xs font-bold text-gray-700 uppercase">Seleccionar Rol:</label>
+          <select id="select-rol-permisos" onchange="cargarPermisosRolUI(this.value)" class="text-xs p-2 border border-amber-300 rounded-lg font-bold bg-amber-50 text-gray-800">
+            <option value="administrador">👑 Administrador</option>
+            <option value="delivery_general">🛵 Delivery General</option>
+            <option value="delivery_reparto">🛵 Delivery Reparto</option>
+            <option value="cliente">🛍️ Cliente</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="contenedor-permisos-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        <!-- Generado dinámicamente -->
+      </div>
+
+      <div class="border-t pt-3 flex justify-end">
+        <button onclick="guardarPermisosRolActual()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold py-2 px-4 rounded shadow transition-colors flex items-center gap-1.5">
+          💾 Guardar Permisos del Rol
+        </button>
+      </div>
+    </div>
+
     <!-- ACCIONES DE REINICIO DE SISTEMA (SOLO DISEÑADOR) -->
     <div class="bg-red-50 p-5 rounded-xl border border-red-200 shadow-sm space-y-3">
       <h3 class="text-sm font-bold text-red-900 flex items-center gap-2">
@@ -505,9 +536,9 @@
       <div class="border-b pb-3 flex justify-between items-center">
         <div>
           <h2 id="titulo-form-producto" class="text-xl font-bold text-gray-800 flex items-center gap-2">
-            🎨 Panel del Diseñador - Crear Producto
+            📦 Gestión de Productos - Crear Producto
           </h2>
-          <p class="text-xs text-gray-500">Gestión de productos en la base de datos Firestore.</p>
+          <p class="text-xs text-gray-500">Crear, modificar o habilitar productos en la base de datos Firestore.</p>
         </div>
         <button id="btn-cancelar-edicion" onclick="cancelarEdicionProducto()" class="hidden bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-bold px-3 py-1.5 rounded transition-colors">
           ✕ Cancelar Edición
@@ -578,12 +609,13 @@
               <th class="p-2 border-r">Nombre</th>
               <th class="p-2 border-r">Categoría</th>
               <th class="p-2 border-r">Precio</th>
+              <th class="p-2 border-r text-center">Estado</th>
               <th class="p-2 text-center">Acciones</th>
             </tr>
           </thead>
           <tbody id="tabla-productos-disenador" class="divide-y divide-gray-100">
             <tr>
-              <td colspan="5" class="p-4 text-center text-gray-400 italic">Cargando catálogo desde Firestore...</td>
+              <td colspan="6" class="p-4 text-center text-gray-400 italic">Cargando catálogo desde Firestore...</td>
             </tr>
           </tbody>
         </table>
@@ -597,7 +629,7 @@
           <h3 class="text-base font-bold text-gray-800 flex items-center gap-2">
             📜 Registro de Auditoría y Modificaciones por Usuario
           </h3>
-          <p class="text-xs text-gray-500">Historial de acciones registradas con firma de usuario y fecha (Exclusivo Diseñador).</p>
+          <p class="text-xs text-gray-500">Historial de acciones registradas con firma de usuario y fecha (Exclusivo Administrador / Diseñador).</p>
         </div>
         <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full">
           🟢 Tiempo Real
@@ -862,14 +894,16 @@
         categoria: "Pollería",
         precio: 3800,
         icono: "🍗",
-        descripcion: "Limpio, trozado o entero listo para cocinar."
+        descripcion: "Limpio, trozado o entero listo para cocinar.",
+        activo: true
       },
       {
         nombre: "Milanesas de Pechuga (1 kg)",
         categoria: "Ofertas",
         precio: 5200,
         icono: "🥩",
-        descripcion: "Preparadas artesanalmente con pan rallado y especias."
+        descripcion: "Preparadas artesanalmente con pan rallado y especias.",
+        activo: true
       }
     ];
 
@@ -891,6 +925,111 @@
     let telefonoWhatsappActual = "5493564123456";
     let plantillaWhatsappActual = PLANTILLA_WHATSAPP_DEFECTO;
     let categoriaSeleccionadaFiltro = "Todas";
+
+    // Módulo de Permisos por Rol
+    const LISTA_PERMISOS = [
+      { id: "crear_modificar_eliminar_productos", label: "Crear / Modificar / Eliminar Productos" },
+      { id: "modificar_alias", label: "Modificar Alias de Transferencia" },
+      { id: "modificar_precio_envio", label: "Modificar Precio de Envío / Delivery" },
+      { id: "crear_usuarios_inferiores", label: "Crear Usuarios Inferiores a su Categoría" },
+      { id: "crear_categorias_usuarios", label: "Crear Categorías / Roles de Usuarios" },
+      { id: "crear_modificar_categorias", label: "Crear / Modificar Categorías" },
+      { id: "crear_modificar_rubros", label: "Crear / Modificar Rubros" },
+      { id: "crear_modificar_iconos", label: "Crear / Modificar Íconos" },
+      { id: "ver_modificar_clientes", label: "Ver / Modificar Clientes" },
+      { id: "ver_habilitar_modificar_premios", label: "Ver / Habilitar / Modificar Premios y Puntos" },
+      { id: "acceso_delivery", label: "Acceso a Módulo Delivery" },
+      { id: "notificaciones_delivery", label: "Alertas y Notificaciones de Delivery" }
+    ];
+
+    let permisosCache = {
+      disenador: LISTA_PERMISOS.reduce((acc, p) => ({ ...acc, [p.id]: true }), {}),
+      administrador: LISTA_PERMISOS.reduce((acc, p) => ({ ...acc, [p.id]: true }), {
+        crear_modificar_eliminar_productos: true
+      }),
+      delivery_general: { acceso_delivery: true, notificaciones_delivery: true },
+      delivery_reparto: { acceso_delivery: true, notificaciones_delivery: true },
+      cliente: {}
+    };
+
+    // ESCUCHAR PERMISOS EN TIEMPO REAL DESDE FIRESTORE
+    onSnapshot(doc(db, "config", "permisos_roles"), (docSnap) => {
+      if (docSnap.exists()) {
+        permisosCache = docSnap.data();
+      }
+      // Garantizar que administrador y disenador siempre mantengan permiso de productos si no está definido
+      if (permisosCache.administrador) permisosCache.administrador.crear_modificar_eliminar_productos = true;
+      if (permisosCache.disenador) permisosCache.disenador.crear_modificar_eliminar_productos = true;
+
+      cargarPermisosRolUI(document.getElementById("select-rol-permisos")?.value || "administrador");
+      aplicarPermisosInterface();
+    });
+
+    window.cargarPermisosRolUI = (rol) => {
+      const cont = document.getElementById("contenedor-permisos-grid");
+      if (!cont) return;
+
+      const permisosRol = permisosCache[rol] || {};
+
+      cont.innerHTML = LISTA_PERMISOS.map(p => `
+        <label class="flex items-center gap-2 p-2 rounded border bg-gray-50 border-gray-200 hover:bg-amber-50/50 cursor-pointer text-xs">
+          <input type="checkbox" data-permiso="${p.id}" ${permisosRol[p.id] ? 'checked' : ''} class="w-4 h-4 text-amber-600 rounded focus:ring-amber-500">
+          <span class="font-semibold text-gray-700">${p.label}</span>
+        </label>
+      `).join("");
+    };
+
+    window.guardarPermisosRolActual = async () => {
+      const rolSel = document.getElementById("select-rol-permisos").value;
+      const inputs = document.querySelectorAll("#contenedor-permisos-grid input[data-permiso]");
+
+      if (!permisosCache[rolSel]) permisosCache[rolSel] = {};
+
+      inputs.forEach(input => {
+        const pId = input.getAttribute("data-permiso");
+        permisosCache[rolSel][pId] = input.checked;
+      });
+
+      try {
+        await setDoc(doc(db, "config", "permisos_roles"), permisosCache, { merge: true });
+        await registrarAuditoria("Modificación Permisos", `Permisos actualizados para el rol "${rolSel}" por ${usuarioActual.username}`);
+        alert(`¡Permisos para el rol '${rolSel}' guardados exitosamente!`);
+      } catch (err) {
+        console.error("Error al guardar permisos:", err);
+        alert("Ocurrió un error al guardar los permisos.");
+      }
+    };
+
+    function tienePermiso(permisoKey) {
+      if (usuarioActual.rol === "disenador" || usuarioActual.rol === "administrador") {
+        if (permisoKey === "crear_modificar_eliminar_productos") return true;
+      }
+      if (usuarioActual.rol === "disenador") return true; // El Diseñador posee superacceso
+      return Boolean(permisosCache[usuarioActual.rol]?.[permisoKey]);
+    }
+
+    function aplicarPermisosInterface() {
+      // Bloqueo / Habilitación de funcionalidades dinámicas en la interfaz
+      const btnGuardarProd = document.getElementById("btn-guardar-producto");
+      if (btnGuardarProd) btnGuardarProd.disabled = !tienePermiso("crear_modificar_eliminar_productos");
+
+      const inputAlias = document.getElementById("config-alias-input");
+      if (inputAlias) inputAlias.disabled = !tienePermiso("modificar_alias");
+
+      const btnGuardarAlias = document.getElementById("btn-guardar-alias");
+      if (btnGuardarAlias) btnGuardarAlias.disabled = !tienePermiso("modificar_alias");
+
+      const btnGuardarCat = document.getElementById("btn-guardar-categoria");
+      if (btnGuardarCat) btnGuardarCat.disabled = !tienePermiso("crear_modificar_categorias");
+
+      const formCrearUser = document.getElementById("form-crear-usuario");
+      if (formCrearUser) {
+        const inputs = formCrearUser.querySelectorAll("input, select, button");
+        inputs.forEach(i => i.disabled = !tienePermiso("crear_usuarios_inferiores"));
+      }
+
+      configurarNavegacionSegunRol();
+    }
 
     // Configuración de Puntos por Defecto
     let configPuntos = {
@@ -1012,6 +1151,11 @@
     // FUNCIONES ADMINISTRACIÓN DE CATEGORÍAS
     window.guardarCategoria = async (e) => {
       e.preventDefault();
+
+      if (!tienePermiso("crear_modificar_categorias")) {
+        return alert("No tienes permisos para realizar esta acción.");
+      }
+
       const idEditar = document.getElementById("cat-id-editar").value;
       const nombreCat = document.getElementById("cat-nombre").value.trim();
 
@@ -1066,6 +1210,9 @@
     };
 
     window.eliminarCategoria = async (id, nombre) => {
+      if (!tienePermiso("crear_modificar_categorias")) {
+        return alert("No tienes permisos para eliminar categorías.");
+      }
       if (!confirm(`¿Eliminar la categoría "${nombre}"? Los productos asignados a ella requerirán reasignación.`)) return;
       try {
         await deleteDoc(doc(db, "categories", id));
@@ -1188,6 +1335,10 @@
     // GUARDAR CONFIGURACIÓN DE PUNTOS EN FIRESTORE
     window.guardarConfiguracionPuntos = async (e) => {
       e.preventDefault();
+      if (!tienePermiso("ver_habilitar_modificar_premios")) {
+        return alert("No tienes permisos para configurar el sistema de puntos.");
+      }
+
       const activo = document.getElementById("puntos-activo").checked;
       const pesos = Number(document.getElementById("puntos-pesos").value);
       const puntos = Number(document.getElementById("puntos-cantidad").value);
@@ -1241,6 +1392,10 @@
     // GUARDAR ALIAS EN FIRESTORE
     window.guardarAliasTransferencia = async (e) => {
       e.preventDefault();
+      if (!tienePermiso("modificar_alias")) {
+        return alert("No tienes permisos para modificar el Alias.");
+      }
+
       const nuevoAlias = document.getElementById("config-alias-input").value.trim().toUpperCase();
       if (!nuevoAlias) return;
 
@@ -1370,7 +1525,7 @@
 
         actualizarBadgeUsuario();
         registrarAuditoria("Inicio de Sesión", `El usuario ${usuarioActual.username} ingresó al sistema.`);
-        configurarNavegacionSegunRol();
+        aplicarPermisosInterface();
 
         if (pedidoPendiente) {
           const tempPedido = pedidoPendiente;
@@ -1388,7 +1543,7 @@
       }
       usuarioActual = { username: "anonimo", nombre: "Anónimo", rol: "cliente" };
       actualizarBadgeUsuario();
-      configurarNavegacionSegunRol();
+      aplicarPermisosInterface();
     };
 
     function actualizarBadgeUsuario() {
@@ -1415,16 +1570,15 @@
       const btnClientesCompras = document.getElementById("btn-tab-clientes-compras");
       const btnPuntos = document.getElementById("btn-tab-puntos");
 
-      const esDelivery = usuarioActual.rol === "delivery_general" || 
-                         usuarioActual.rol === "delivery_reparto" || 
-                         usuarioActual.rol === "delivery";
+      const accesoDelivery = tienePermiso("acceso_delivery");
+      const accesoProductos = tienePermiso("crear_modificar_eliminar_productos");
 
       btnCli.style.display = "block";
-      btnDel.style.display = (esDelivery || usuarioActual.rol === "administrador") ? "block" : "none";
-      btnDis.style.display = (usuarioActual.rol === "disenador") ? "block" : "none";
+      btnDel.style.display = accesoDelivery ? "block" : "none";
+      btnDis.style.display = (usuarioActual.rol === "disenador" || usuarioActual.rol === "administrador" || accesoProductos) ? "block" : "none";
       btnAdm.style.display = (usuarioActual.rol === "administrador") ? "block" : "none";
-      btnClientesCompras.style.display = (usuarioActual.rol === "administrador" || usuarioActual.rol === "disenador") ? "block" : "none";
-      btnPuntos.style.display = (usuarioActual.rol === "administrador" || usuarioActual.rol === "disenador") ? "block" : "none";
+      btnClientesCompras.style.display = (tienePermiso("ver_modificar_clientes") || usuarioActual.rol === "disenador" || usuarioActual.rol === "administrador") ? "block" : "none";
+      btnPuntos.style.display = (tienePermiso("ver_habilitar_modificar_premios") || usuarioActual.rol === "disenador" || usuarioActual.rol === "administrador") ? "block" : "none";
 
       if (usuarioActual.rol === "administrador") {
         mostrarVista("admin");
@@ -1433,7 +1587,7 @@
         mostrarVista("disenador");
         renderizarUsuariosCreados();
       }
-      else if (esDelivery) mostrarVista("delivery");
+      else if (accesoDelivery) mostrarVista("delivery");
       else mostrarVista("cliente");
     }
 
@@ -1511,7 +1665,7 @@
 
       productosCache = {};
       snapshot.docs.forEach(docSnap => {
-        const p = { id: docSnap.id, ...docSnap.data() };
+        const p = { id: docSnap.id, activo: true, ...docSnap.data() };
         productosCache[p.id] = p;
       });
 
@@ -1545,11 +1699,14 @@
         productosFiltrados = listaProductos.filter(p => (p.categoria || '').toLowerCase() === categoriaSeleccionadaFiltro.toLowerCase());
       }
 
+      // En el catálogo del cliente se muestran ÚNICAMENTE los productos activos (activo !== false)
+      const productosTiendaCliente = productosFiltrados.filter(p => p.activo !== false);
+
       if (contenedorTienda) {
-        if (productosFiltrados.length === 0) {
-          contenedorTienda.innerHTML = `<div class="col-span-full text-center py-8 text-gray-400 text-xs italic">No hay productos en esta categoría.</div>`;
+        if (productosTiendaCliente.length === 0) {
+          contenedorTienda.innerHTML = `<div class="col-span-full text-center py-8 text-gray-400 text-xs italic">No hay productos disponibles en esta categoría.</div>`;
         } else {
-          productosFiltrados.forEach(p => {
+          productosTiendaCliente.forEach(p => {
             const precioFormateado = Number(p.precio || 0).toLocaleString("es-AR");
             const esOferta = (p.categoria || '').toLowerCase() === 'ofertas';
 
@@ -1584,13 +1741,22 @@
       if (tablaDisenador) {
         listaProductos.forEach(p => {
           const precioFormateado = Number(p.precio || 0).toLocaleString("es-AR");
+          const esActivo = p.activo !== false;
           tablaDisenador.innerHTML += `
-            <tr class="hover:bg-gray-50 text-[11px]">
+            <tr class="hover:bg-gray-50 text-[11px] ${!esActivo ? 'bg-gray-100/70 text-gray-400' : ''}">
               <td class="p-2 border-r text-center text-lg">${p.icono || '🍗'}</td>
-              <td class="p-2 border-r font-bold text-gray-900">${p.nombre}</td>
+              <td class="p-2 border-r font-bold text-gray-900 ${!esActivo ? 'line-through text-gray-400' : ''}">${p.nombre}</td>
               <td class="p-2 border-r"><span class="bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded font-semibold">${p.categoria || 'Pollería'}</span></td>
               <td class="p-2 border-r font-extrabold text-red-700">$${precioFormateado}</td>
+              <td class="p-2 border-r text-center">
+                <span class="${esActivo ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'} px-2 py-0.5 rounded text-[10px] font-bold">
+                  ${esActivo ? '🟢 Habilitado' : '🔴 Deshabilitado'}
+                </span>
+              </td>
               <td class="p-2 text-center space-x-1">
+                <button onclick="alternarEstadoProducto('${p.id}')" class="${esActivo ? 'bg-red-100 hover:bg-red-200 text-red-800' : 'bg-emerald-100 hover:bg-emerald-200 text-emerald-800'} font-bold px-2 py-1 rounded transition-colors text-[10px]">
+                  ${esActivo ? '🚫 Deshabilitar' : '✅ Habilitar'}
+                </button>
                 <button onclick="cargarProductoParaEditar('${p.id}')" class="bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold px-2 py-1 rounded transition-colors text-[10px]">
                   ✏️ Editar
                 </button>
@@ -1604,7 +1770,33 @@
       }
     }
 
+    window.alternarEstadoProducto = async (id) => {
+      if (!tienePermiso("crear_modificar_eliminar_productos")) {
+        return alert("No tienes permisos para modificar el estado de los productos.");
+      }
+      const prod = productosCache[id];
+      if (!prod) return;
+
+      const nuevoEstado = !(prod.activo !== false);
+
+      try {
+        await updateDoc(doc(db, "products", id), {
+          activo: nuevoEstado,
+          modificadoPor: usuarioActual.username,
+          modificadoEn: serverTimestamp()
+        });
+
+        await registrarAuditoria("Estado Producto Modificado", `Producto "${prod.nombre}" (${id}) ${nuevoEstado ? 'habilitado' : 'deshabilitado'} por ${usuarioActual.username}.`);
+      } catch (err) {
+        console.error("Error al cambiar estado del producto:", err);
+        alert("Ocurrió un error al cambiar el estado del producto.");
+      }
+    };
+
     window.cargarProductoParaEditar = (id) => {
+      if (!tienePermiso("crear_modificar_eliminar_productos")) {
+        return alert("No tienes permisos para modificar productos.");
+      }
       const prod = productosCache[id];
       if (!prod) return alert("No se encontraron los datos del producto.");
 
@@ -1630,7 +1822,7 @@
       document.getElementById("prod-id-editar").value = "";
       document.getElementById("prod-icono").value = "🍗";
 
-      document.getElementById("titulo-form-producto").innerHTML = "🎨 Panel del Diseñador - Crear Producto";
+      document.getElementById("titulo-form-producto").innerHTML = "📦 Gestión de Productos - Crear Producto";
       document.getElementById("btn-cancelar-edicion").classList.add("hidden");
 
       const btnSubmit = document.getElementById("btn-guardar-producto");
@@ -1640,6 +1832,10 @@
 
     window.guardarNuevoProducto = async (e) => {
       e.preventDefault();
+
+      if (!tienePermiso("crear_modificar_eliminar_productos")) {
+        return alert("No tienes permisos para crear o modificar productos.");
+      }
       
       const idEditar = document.getElementById("prod-id-editar").value;
       const esEdicion = Boolean(idEditar);
@@ -1677,6 +1873,7 @@
             precio: precio,
             descripcion: desc,
             icono: icono,
+            activo: true,
             creadoPor: usuarioActual.username,
             creadoEn: serverTimestamp()
           });
@@ -1696,6 +1893,9 @@
     };
 
     window.eliminarProducto = async (id, nombre) => {
+      if (!tienePermiso("crear_modificar_eliminar_productos")) {
+        return alert("No tienes permisos para eliminar productos.");
+      }
       if (!confirm(`¿Estás seguro de eliminar el producto "${nombre}" del catálogo global?`)) return;
       try {
         await deleteDoc(doc(db, "products", id));
@@ -1711,6 +1911,57 @@
         alert("Error al eliminar el producto.");
       }
     };
+
+    window.crearUsuarioSistema = async (e) => {
+      e.preventDefault();
+      if (!tienePermiso("crear_usuarios_inferiores")) {
+        return alert("No tienes permisos para crear nuevos usuarios.");
+      }
+
+      const userIngresado = document.getElementById("user-nombre").value.trim();
+      const passIngresado = document.getElementById("user-pass").value.trim();
+      const rolSeleccionado = document.getElementById("user-rol").value;
+
+      if (!userIngresado || !passIngresado) return;
+
+      const existe = baseUsuarios.find(u => u.username.toLowerCase() === userIngresado.toLowerCase());
+      if (existe) {
+        return alert("El nombre de usuario o correo ya está registrado.");
+      }
+
+      const nuevoUsuario = {
+        username: userIngresado,
+        pass: passIngresado,
+        nombre: userIngresado,
+        rol: rolSeleccionado,
+        creadoPor: usuarioActual.username
+      };
+
+      baseUsuarios.push(nuevoUsuario);
+      localStorage.setItem("polleria_rey_usuarios", JSON.stringify(baseUsuarios));
+
+      await registrarAuditoria("Creación Usuario", `Nuevo usuario "${userIngresado}" (${rolSeleccionado}) creado por ${usuarioActual.username}`);
+      alert("¡Usuario creado exitosamente!");
+      document.getElementById("form-crear-usuario").reset();
+      renderizarUsuariosCreados();
+    };
+
+    function renderizarUsuariosCreados() {
+      const tbody = document.getElementById("tabla-usuarios-creados");
+      if (!tbody) return;
+
+      tbody.innerHTML = "";
+      baseUsuarios.forEach(u => {
+        tbody.innerHTML += `
+          <tr class="hover:bg-gray-50 text-[11px]">
+            <td class="p-2 border-r font-bold text-gray-900">${u.username}</td>
+            <td class="p-2 border-r text-gray-700">${u.nombre || u.username}</td>
+            <td class="p-2 border-r"><span class="bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-semibold capitalize">${u.rol}</span></td>
+            <td class="p-2 text-gray-500 font-mono">${u.creadoPor || 'Sistema'}</td>
+          </tr>
+        `;
+      });
+    }
 
     window.agregarAlCarrito = (id, nombre, precio, icono = '🍗') => {
       const existe = carrito.find(i => i.id === id);
@@ -1751,452 +2002,28 @@
           <li class="py-1.5 flex justify-between items-center text-xs">
             <div><span class="font-bold text-gray-800">${item.cantidad}x</span> ${item.icono || '🍗'} ${item.nombre}</div>
             <div class="flex items-center gap-2">
-              <span class="font-semibold text-gray-700">$${(item.precio * item.cantidad).toLocaleString('es-AR')}</span>
-              <button onclick="eliminarDelCarrito(${idx})" class="text-red-500 font-bold px-1 hover:bg-red-50 rounded">✕</button>
+              <span class="font-semibold text-gray-700">$${(item.precio * item.cantidad).toLocaleString("es-AR")}</span>
+              <button onclick="cambiarCantidadCarrito(${idx}, -1)" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-1.5 py-0.5 rounded font-bold">-</button>
+              <button onclick="cambiarCantidadCarrito(${idx}, 1)" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-1.5 py-0.5 rounded font-bold">+</button>
             </div>
-          </li>`;
+          </li>
+        `;
       });
 
-      const totalFormateado = `$${total.toLocaleString('es-AR')}`;
-      totalEl.innerText = totalFormateado;
+      totalEl.innerText = `$${total.toLocaleString("es-AR")}`;
       cantItemsEl.innerText = `${totalCant} items`;
 
-      if (resumenCant) resumenCant.innerText = `${totalCant} ${totalCant === 1 ? 'producto' : 'productos'}`;
-      if (resumenTotal) resumenTotal.innerText = totalFormateado;
+      if (resumenCant) resumenCant.innerText = `${totalCant} productos`;
+      if (resumenTotal) resumenTotal.innerText = `$${total.toLocaleString("es-AR")}`;
     }
 
-    window.eliminarDelCarrito = (index) => {
-      carrito.splice(index, 1);
+    window.cambiarCantidadCarrito = (idx, cambio) => {
+      carrito[idx].cantidad += cambio;
+      if (carrito[idx].cantidad <= 0) {
+        carrito.splice(idx, 1);
+      }
       actualizarCarritoUI();
     };
-
-    window.realizarPedido = (e) => {
-      e.preventDefault();
-      if (carrito.length === 0) return alert("Agrega al menos un producto al carrito.");
-
-      const esRetiro = document.getElementById("cli-retiro-local").checked;
-      const horaDesde = document.getElementById("cli-horario-desde").value;
-      const horaHasta = document.getElementById("cli-horario-hasta").value;
-
-      let horarioPreferente = "";
-      if (horaDesde || horaHasta) {
-        horarioPreferente = `De ${horaDesde || '--:--'} a ${horaHasta || '--:--'} hs`;
-      }
-
-      pedidoPendiente = {
-        nombreCliente: document.getElementById("cli-nombre").value.trim(),
-        telefonoCliente: document.getElementById("cli-telefono").value.trim(),
-        esRetiroLocal: esRetiro,
-        direccionEnvio: esRetiro ? "Retiro en local" : document.getElementById("cli-direccion").value.trim(),
-        horarioPreferente: horarioPreferente || "Sin preferencia especificada",
-        metodoPago: document.getElementById("cli-pago").value,
-        observaciones: document.getElementById("cli-observaciones").value.trim() || "Sin observaciones",
-        items: carrito.map(i => ({ productId: i.id, nombre: i.nombre, icono: i.icono, cantidad: i.cantidad, precioUnitario: i.precio })),
-        total: carrito.reduce((acc, i) => acc + (i.precio * i.cantidad), 0)
-      };
-
-      if (usuarioActual.username === "anonimo") {
-        document.getElementById("modal-premio").classList.remove("hidden");
-      } else {
-        procesarEnvioPedido(pedidoPendiente);
-      }
-    };
-
-    window.confirmarPedidoAnonimo = () => {
-      document.getElementById("modal-premio").classList.add("hidden");
-      if (pedidoPendiente) {
-        const temp = pedidoPendiente;
-        pedidoPendiente = null;
-        procesarEnvioPedido(temp);
-      }
-    };
-
-    async function procesarEnvioPedido(dataPedido) {
-      const clienteData = {
-        ...dataPedido,
-        estado: "pendiente",
-        creadoPorUsuario: usuarioActual.username,
-        creadoEn: serverTimestamp()
-      };
-
-      try {
-        const docRef = await addDoc(collection(db, "orders"), clienteData);
-
-        await registrarAuditoria("Creación de Pedido", `Pedido #${docRef.id.slice(-5).toUpperCase()} registrado por "${usuarioActual.username}" por $${clienteData.total}`);
-
-        const idPedidoShort = docRef.id.slice(-5).toUpperCase();
-        const resumenItems = clienteData.items.map(i => `• ${i.icono || '🍗'} ${i.cantidad}x ${i.nombre} ($${(i.precioUnitario * i.cantidad).toLocaleString('es-AR')})`).join("\n");
-        const modoTexto = clienteData.esRetiroLocal ? "🏪 *RETIRO EN LOCAL*" : `📍 *Dirección:* ${clienteData.direccionEnvio}`;
-        const horarioTexto = clienteData.esRetiroLocal ? `🕒 *Horario estimado de retiro:* ${clienteData.horarioPreferente}` : `🕒 *Horario preferente de entrega:* ${clienteData.horarioPreferente}`;
-        const pagoTexto = clienteData.metodoPago === 'transferencia' ? `Transferencia (Alias: ${aliasActual})` : 'Efectivo';
-        
-        const recordatorioTransferencia = clienteData.metodoPago === 'transferencia' 
-          ? "⚠️ *RECORDATORIO:* Por favor no olvides enviar el comprobante de transferencia por este medio para confirmar el pedido." 
-          : "";
-
-        let mensajeFinal = plantillaWhatsappActual
-          .replace(/{ID}/g, idPedidoShort)
-          .replace(/{CLIENTE}/g, clienteData.nombreCliente)
-          .replace(/{USUARIO}/g, usuarioActual.username)
-          .replace(/{MODO_ENTREGA}/g, modoTexto)
-          .replace(/{HORARIO}/g, horarioTexto)
-          .replace(/{PAGO}/g, pagoTexto)
-          .replace(/{RECORDATORIO_TRANSFERENCIA}/g, recordatorioTransferencia)
-          .replace(/{OBSERVACIONES}/g, clienteData.observaciones)
-          .replace(/{DETALLE_PRODUCTOS}/g, resumenItems)
-          .replace(/{TOTAL}/g, `$${clienteData.total.toLocaleString('es-AR')}`);
-
-        mensajeFinal = mensajeFinal.replace(/\n\s*\n\s*\n/g, '\n\n').trim();
-
-        carrito = [];
-        actualizarCarritoUI();
-        document.getElementById("form-checkout").reset();
-        alternarModoEntrega(false);
-        document.getElementById("alerta-alias-copiado").classList.add("hidden");
-
-        window.location.href = `https://wa.me/${telefonoWhatsappActual}?text=${encodeURIComponent(mensajeFinal)}`;
-
-      } catch (err) {
-        console.error("Error al registrar pedido:", err);
-      }
-    }
-
-    function emitirSonidoAlerta() {
-      if (!sonidoHabilitado) return;
-      try {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        const ctx = new AudioCtx();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(600, ctx.currentTime);
-        osc.frequency.setValueAtTime(900, ctx.currentTime + 0.15);
-
-        gain.gain.setValueAtTime(0.3, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.5);
-
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.5);
-      } catch (e) {
-        console.warn(e);
-      }
-    }
-
-    window.alternarSonido = () => {
-      sonidoHabilitado = !sonidoHabilitado;
-      const btn = document.getElementById("btn-audio");
-      btn.innerText = sonidoHabilitado ? "🔔 Alertas: Activadas" : "🔕 Alerta Sonora: Desactivada";
-    };
-
-    const qOrders = query(collection(db, "orders"), orderBy("creadoEn", "desc"));
-
-    onSnapshot(qOrders, (snapshot) => {
-      const columnas = {
-        pendiente: document.getElementById("col-pendiente"),
-        en_preparacion: document.getElementById("col-en_preparacion"),
-        en_camino: document.getElementById("col-en_camino"),
-        entregado: document.getElementById("col-entregado"),
-        cancelado: document.getElementById("col-cancelado"),
-      };
-
-      const contadores = { pendiente: 0, en_preparacion: 0, en_camino: 0, entregado: 0, cancelado: 0 };
-      Object.values(columnas).forEach(col => { if(col) col.innerHTML = ""; });
-
-      if (!esCargaInicial) {
-        snapshot.docChanges().forEach(change => {
-          if (change.type === "added" && change.doc.data().estado === "pendiente") {
-            emitirSonidoAlerta();
-          }
-        });
-      } else {
-        esCargaInicial = false;
-      }
-
-      const clientesMap = {};
-      const listaPedidos = [];
-
-      snapshot.docs.forEach(docSnap => {
-        const order = { id: docSnap.id, ...docSnap.data() };
-        listaPedidos.push(order);
-        const colKey = order.estado || "pendiente";
-
-        if (columnas[colKey]) {
-          contadores[colKey]++;
-          columnas[colKey].appendChild(crearTarjetaDelivery(order));
-        }
-
-        // Agrupar datos para la sección de Registro de Clientes y Compras
-        const telKey = order.telefonoCliente || "sin_telefono";
-        if (!clientesMap[telKey]) {
-          clientesMap[telKey] = {
-            nombre: order.nombreCliente || "Cliente",
-            telefono: order.telefonoCliente || "N/A",
-            cantPedidos: 0,
-            totalConsumido: 0
-          };
-        }
-        clientesMap[telKey].cantPedidos += 1;
-        clientesMap[telKey].totalConsumido += (order.total || 0);
-      });
-
-      Object.keys(contadores).forEach(key => {
-        const badge = document.getElementById(`cant-${key}`);
-        if (badge) badge.innerText = contadores[key];
-      });
-
-      renderizarClientesCompras(clientesMap);
-      actualizarResumenEstadisticosAdmin(listaPedidos);
-    });
-
-    // LÓGICA DE CALCULO DE MÉTRICAS Y RESUMEN PARA MODO ADMINISTRADOR
-    function actualizarResumenEstadisticosAdmin(pedidos) {
-      const ahora = new Date();
-      
-      const inicioDia = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
-      
-      const diaSemana = ahora.getDay(); 
-      const diffPistas = ahora.getDate() - diaSemana + (diaSemana === 0 ? -6 : 1);
-      const inicioSemana = new Date(ahora.setDate(diffPistas));
-      inicioSemana.setHours(0,0,0,0);
-      
-      const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
-      const inicioAnio = new Date(ahora.getFullYear(), 0, 1);
-
-      let statDia = { count: 0, total: 0 };
-      let statSemana = { count: 0, total: 0 };
-      let statMes = { count: 0, total: 0 };
-      let statAnio = { count: 0, total: 0 };
-
-      let statEntrega = { delivery: { count: 0, total: 0 }, retiro: { count: 0, total: 0 } };
-      let statPago = { efectivo: { count: 0, total: 0 }, transferencia: { count: 0, total: 0 } };
-
-      let productosVendidosMap = {};
-
-      pedidos.forEach(p => {
-        if (p.estado === "cancelado") return;
-
-        const fechaPedido = p.creadoEn ? new Date(p.creadoEn.seconds * 1000) : new Date();
-        const monto = Number(p.total || 0);
-
-        if (fechaPedido >= inicioDia) { statDia.count++; statDia.total += monto; }
-        if (fechaPedido >= inicioSemana) { statSemana.count++; statSemana.total += monto; }
-        if (fechaPedido >= inicioMes) { statMes.count++; statMes.total += monto; }
-        if (fechaPedido >= inicioAnio) { statAnio.count++; statAnio.total += monto; }
-
-        if (p.esRetiroLocal) {
-          statEntrega.retiro.count++;
-          statEntrega.retiro.total += monto;
-        } else {
-          statEntrega.delivery.count++;
-          statEntrega.delivery.total += monto;
-        }
-
-        if (p.metodoPago === "transferencia") {
-          statPago.transferencia.count++;
-          statPago.transferencia.total += monto;
-        } else {
-          statPago.efectivo.count++;
-          statPago.efectivo.total += monto;
-        }
-
-        if (p.items && Array.isArray(p.items)) {
-          p.items.forEach(it => {
-            const prodNombre = it.nombre || "Producto Indefinido";
-            if (!productosVendidosMap[prodNombre]) {
-              productosVendidosMap[prodNombre] = {
-                nombre: prodNombre,
-                icono: it.icono || "🍗",
-                unidades: 0,
-                recaudacion: 0
-              };
-            }
-            productosVendidosMap[prodNombre].unidades += Number(it.cantidad || 0);
-            productosVendidosMap[prodNombre].recaudacion += (Number(it.precioUnitario || 0) * Number(it.cantidad || 0));
-          });
-        }
-      });
-
-      // Actualizar UI Métricas
-      document.getElementById("stat-dia-pedidos").innerText = `${statDia.count} ped.`;
-      document.getElementById("stat-dia-monto").innerText = `$${statDia.total.toLocaleString("es-AR")}`;
-
-      document.getElementById("stat-semana-pedidos").innerText = `${statSemana.count} ped.`;
-      document.getElementById("stat-semana-monto").innerText = `$${statSemana.total.toLocaleString("es-AR")}`;
-
-      document.getElementById("stat-mes-pedidos").innerText = `${statMes.count} ped.`;
-      document.getElementById("stat-mes-monto").innerText = `$${statMes.total.toLocaleString("es-AR")}`;
-
-      document.getElementById("stat-anio-pedidos").innerText = `${statAnio.count} ped.`;
-      document.getElementById("stat-anio-monto").innerText = `$${statAnio.total.toLocaleString("es-AR")}`;
-
-      document.getElementById("stat-entrega-delivery").innerText = `${statEntrega.delivery.count} ped. ($${statEntrega.delivery.total.toLocaleString("es-AR")})`;
-      document.getElementById("stat-entrega-retiro").innerText = `${statEntrega.retiro.count} ped. ($${statEntrega.retiro.total.toLocaleString("es-AR")})`;
-
-      document.getElementById("stat-pago-efectivo").innerText = `${statPago.efectivo.count} ped. ($${statPago.efectivo.total.toLocaleString("es-AR")})`;
-      document.getElementById("stat-pago-transferencia").innerText = `${statPago.transferencia.count} ped. ($${statPago.transferencia.total.toLocaleString("es-AR")})`;
-
-      // Renderizar Tabla Resumen de Productos
-      const tbodyProds = document.getElementById("tabla-resumen-productos");
-      if (tbodyProds) {
-        tbodyProds.innerHTML = "";
-        const listaProds = Object.values(productosVendidosMap).sort((a,b) => b.unidades - a.unidades);
-
-        if (listaProds.length === 0) {
-          tbodyProds.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-gray-400 italic">No hay ventas registradas aún.</td></tr>`;
-        } else {
-          listaProds.forEach(p => {
-            tbodyProds.innerHTML += `
-              <tr class="hover:bg-gray-50 text-xs">
-                <td class="p-2.5 border-r font-bold text-gray-900 flex items-center gap-1.5">
-                  <span>${p.icono}</span> ${p.nombre}
-                </td>
-                <td class="p-2.5 border-r text-center font-bold text-gray-700">${p.unidades} u.</td>
-                <td class="p-2.5 text-right font-extrabold text-red-700">$${p.recaudacion.toLocaleString("es-AR")}</td>
-              </tr>
-            `;
-          });
-        }
-      }
-    }
-
-    function renderizarClientesCompras(clientesMap) {
-      const tbody = document.getElementById("tabla-clientes-compras");
-      if (!tbody) return;
-
-      tbody.innerHTML = "";
-      const listaClientes = Object.values(clientesMap);
-
-      if (listaClientes.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400 italic">No hay registros de clientes aún.</td></tr>`;
-        return;
-      }
-
-      listaClientes.forEach(c => {
-        let puntosAcumulados = 0;
-        if (configPuntos.activo && configPuntos.pesos > 0) {
-          puntosAcumulados = Math.floor(c.totalConsumido / configPuntos.pesos) * configPuntos.puntos;
-        }
-
-        const msgWa = encodeURIComponent(`¡Hola ${c.nombre}! 🍗 Queremos agradecerte por tus compras en Pollería REY. Tenés acumulados ${puntosAcumulados} puntos para canjear por premios en tu próximo pedido.`);
-        const urlWa = `https://wa.me/${c.telefono.replace(/[^0-9]/g, '')}?text=${msgWa}`;
-
-        tbody.innerHTML += `
-          <tr class="hover:bg-gray-50 text-xs">
-            <td class="p-2.5 border-r font-bold text-gray-900">${c.nombre}</td>
-            <td class="p-2.5 border-r font-mono text-gray-600">${c.telefono}</td>
-            <td class="p-2.5 border-r text-center font-bold text-gray-700">${c.cantPedidos}</td>
-            <td class="p-2.5 border-r text-right font-black text-red-700">$${c.totalConsumido.toLocaleString("es-AR")}</td>
-            <td class="p-2.5 border-r text-center font-bold text-amber-600">⭐ ${puntosAcumulados} pts</td>
-            <td class="p-2.5 text-center">
-              <a href="${urlWa}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1 rounded transition-colors text-[10px] inline-flex items-center gap-1">
-                💬 Promoción WhatsApp
-              </a>
-            </td>
-          </tr>
-        `;
-      });
-    }
-
-    function crearTarjetaDelivery(order) {
-      const div = document.createElement("div");
-      div.className = "bg-white p-3 rounded-lg border border-gray-200 shadow-sm text-xs space-y-2";
-
-      const idShort = order.id.slice(-5).toUpperCase();
-      const hora = order.creadoEn ? new Date(order.creadoEn.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
-      const itemsHtml = (order.items || []).map(i => `<div class="flex justify-between"><span>${i.icono || '🍗'} ${i.cantidad}x ${i.nombre}</span><span class="font-bold">$${(i.precioUnitario * i.cantidad).toLocaleString('es-AR')}</span></div>`).join('');
-
-      div.innerHTML = `
-        <div class="flex justify-between items-center border-b pb-1">
-          <span class="font-bold text-gray-800">#${idShort}</span>
-          <span class="text-[10px] text-gray-400 font-mono">${hora}</span>
-        </div>
-        <div>
-          <div class="font-bold text-gray-900">${order.nombreCliente}</div>
-          <div class="text-[11px] text-gray-600 font-mono">${order.telefonoCliente}</div>
-          <div class="text-[11px] text-gray-700 mt-1 font-medium">${order.esRetiroLocal ? '🏪 Retiro en local' : '📍 ' + order.direccionEnvio}</div>
-        </div>
-        <div class="bg-gray-50 p-1.5 rounded space-y-1 text-[11px]">
-          ${itemsHtml}
-        </div>
-        <div class="flex justify-between items-center border-t pt-1 font-bold">
-          <span>Total:</span>
-          <span class="text-red-700 text-sm">$${(order.total || 0).toLocaleString('es-AR')}</span>
-        </div>
-        <div class="text-[10px] text-gray-500 italic">Pago: ${order.metodoPago}</div>
-        <div class="flex flex-wrap gap-1 pt-1 border-t">
-          ${renderizarBotonesEstado(order.id, order.estado)}
-        </div>
-      `;
-      return div;
-    }
-
-    function renderizarBotonesEstado(id, estadoActual) {
-      const estados = [
-        { id: "pendiente", label: "🟡 Pendiente", class: "bg-yellow-100 text-yellow-800 hover:bg-yellow-200" },
-        { id: "en_preparacion", label: "🔵 Preparar", class: "bg-blue-100 text-blue-800 hover:bg-blue-200" },
-        { id: "en_camino", label: "🛵 En Camino", class: "bg-purple-100 text-purple-800 hover:bg-purple-200" },
-        { id: "entregado", label: "🟢 Entregado", class: "bg-green-100 text-green-800 hover:bg-green-200" },
-        { id: "cancelado", label: "🔴 Cancelar", class: "bg-red-100 text-red-800 hover:bg-red-200" }
-      ];
-
-      return estados
-        .filter(e => e.id !== estadoActual)
-        .map(e => `<button onclick="cambiarEstadoPedido('${id}', '${e.id}')" class="${e.class} px-1.5 py-0.5 rounded text-[10px] font-bold transition-colors">${e.label}</button>`)
-        .join('');
-    }
-
-    window.cambiarEstadoPedido = async (id, nuevoEstado) => {
-      try {
-        await updateDoc(doc(db, "orders", id), {
-          estado: nuevoEstado,
-          actualizadoEn: serverTimestamp()
-        });
-        await registrarAuditoria("Cambio Estado Pedido", `Pedido #${id.slice(-5).toUpperCase()} cambiado a ${nuevoEstado} por ${usuarioActual.username}`);
-      } catch (err) {
-        console.error("Error al actualizar estado:", err);
-      }
-    };
-
-    window.crearUsuarioSistema = (e) => {
-      e.preventDefault();
-      const uNombre = document.getElementById("user-nombre").value.trim();
-      const uPass = document.getElementById("user-pass").value.trim();
-      const uRol = document.getElementById("user-rol").value;
-
-      if (!uNombre || !uPass) return;
-
-      const existe = baseUsuarios.find(u => u.username.toLowerCase() === uNombre.toLowerCase());
-      if (existe) return alert("Ese usuario ya existe.");
-
-      const nuevoU = { username: uNombre, pass: uPass, nombre: uNombre, rol: uRol, creadoPor: usuarioActual.username };
-      baseUsuarios.push(nuevoU);
-      localStorage.setItem("polleria_rey_usuarios", JSON.stringify(baseUsuarios));
-
-      registrarAuditoria("Usuario Creado", `Nuevo usuario "${uNombre}" con rol ${uRol} creado por ${usuarioActual.username}`);
-      alert("Usuario creado exitosamente.");
-      document.getElementById("form-crear-usuario").reset();
-      renderizarUsuariosCreados();
-    };
-
-    function renderizarUsuariosCreados() {
-      const tbody = document.getElementById("tabla-usuarios-creados");
-      if (!tbody) return;
-
-      tbody.innerHTML = "";
-      baseUsuarios.forEach(u => {
-        tbody.innerHTML += `
-          <tr class="hover:bg-gray-50 text-xs">
-            <td class="p-2 border-r font-bold text-gray-800">${u.username}</td>
-            <td class="p-2 border-r text-gray-600">${u.nombre || 'N/A'}</td>
-            <td class="p-2 border-r"><span class="bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded font-semibold capitalize">${u.rol}</span></td>
-            <td class="p-2 text-gray-500 font-mono">${u.creadoPor || 'Sistema'}</td>
-          </tr>
-        `;
-      });
-    }
   </script>
 </body>
 </html>
