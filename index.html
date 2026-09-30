@@ -119,7 +119,7 @@
           ⭐ Puntos
         </button>
         <button id="btn-tab-disenador" onclick="mostrarVista('disenador')" class="tab-btn px-3 py-1.5 rounded-md text-red-100 hover:bg-red-800 hidden">
-          🎨 Gestión Productos
+          🎨 Diseñador
         </button>
         <button id="btn-tab-admin" onclick="mostrarVista('admin')" class="tab-btn px-3 py-1.5 rounded-md text-red-100 hover:bg-red-800 hidden">
           👑 Panel Admin
@@ -173,9 +173,15 @@
           <li class="text-xs text-gray-400 italic py-2 text-center">El carrito está vacío.</li>
         </ul>
 
-        <div class="border-t pt-2 flex justify-between items-center">
-          <span class="font-bold text-gray-700">Total:</span>
-          <span id="total-carrito" class="text-xl font-black text-red-700">$0</span>
+        <div class="border-t pt-2 space-y-1">
+          <div id="fila-costo-envio" class="flex justify-between items-center text-xs text-gray-600">
+            <span>🛵 Envío a domicilio:</span>
+            <span id="monto-envio-display" class="font-bold text-gray-800">$0</span>
+          </div>
+          <div class="flex justify-between items-center pt-1">
+            <span class="font-bold text-gray-700">Total:</span>
+            <span id="total-carrito" class="text-xl font-black text-red-700">$0</span>
+          </div>
         </div>
 
         <form id="form-checkout" onsubmit="realizarPedido(event)" class="space-y-3 pt-2 border-t">
@@ -382,40 +388,9 @@
     </div>
   </main>
 
-  <!-- VISTA 3: DISEÑADOR / GESTIÓN DE PRODUCTOS -->
+  <!-- VISTA 3: DISEÑADOR -->
   <main id="vista-disenador" class="max-w-5xl mx-auto p-4 md:p-6 flex-1 w-full hidden space-y-6">
     
-    <!-- MODULO DE CONTROL DE PERMISOS POR CATEGORÍA DE USUARIO (SOLO DISEÑADOR) -->
-    <div class="bg-white p-6 rounded-xl border border-amber-300 shadow-sm space-y-4">
-      <div class="border-b border-amber-200 pb-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-        <div>
-          <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
-            🛡️ Configuración de Permisos por Categoría de Usuario
-          </h2>
-          <p class="text-xs text-gray-500">Habilita o deshabilita funciones específicas para cada rol del sistema en tiempo real.</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <label class="text-xs font-bold text-gray-700 uppercase">Seleccionar Rol:</label>
-          <select id="select-rol-permisos" onchange="cargarPermisosRolUI(this.value)" class="text-xs p-2 border border-amber-300 rounded-lg font-bold bg-amber-50 text-gray-800">
-            <option value="administrador">👑 Administrador</option>
-            <option value="delivery_general">🛵 Delivery General</option>
-            <option value="delivery_reparto">🛵 Delivery Reparto</option>
-            <option value="cliente">🛍️ Cliente</option>
-          </select>
-        </div>
-      </div>
-
-      <div id="contenedor-permisos-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-        <!-- Generado dinámicamente -->
-      </div>
-
-      <div class="border-t pt-3 flex justify-end">
-        <button onclick="guardarPermisosRolActual()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold py-2 px-4 rounded shadow transition-colors flex items-center gap-1.5">
-          💾 Guardar Permisos del Rol
-        </button>
-      </div>
-    </div>
-
     <!-- ACCIONES DE REINICIO DE SISTEMA (SOLO DISEÑADOR) -->
     <div class="bg-red-50 p-5 rounded-xl border border-red-200 shadow-sm space-y-3">
       <h3 class="text-sm font-bold text-red-900 flex items-center gap-2">
@@ -536,9 +511,9 @@
       <div class="border-b pb-3 flex justify-between items-center">
         <div>
           <h2 id="titulo-form-producto" class="text-xl font-bold text-gray-800 flex items-center gap-2">
-            📦 Gestión de Productos - Crear Producto
+            🎨 Panel del Diseñador - Crear Producto
           </h2>
-          <p class="text-xs text-gray-500">Crear, modificar o habilitar productos en la base de datos Firestore.</p>
+          <p class="text-xs text-gray-500">Gestión de productos en la base de datos Firestore.</p>
         </div>
         <button id="btn-cancelar-edicion" onclick="cancelarEdicionProducto()" class="hidden bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-bold px-3 py-1.5 rounded transition-colors">
           ✕ Cancelar Edición
@@ -609,13 +584,12 @@
               <th class="p-2 border-r">Nombre</th>
               <th class="p-2 border-r">Categoría</th>
               <th class="p-2 border-r">Precio</th>
-              <th class="p-2 border-r text-center">Estado</th>
               <th class="p-2 text-center">Acciones</th>
             </tr>
           </thead>
           <tbody id="tabla-productos-disenador" class="divide-y divide-gray-100">
             <tr>
-              <td colspan="6" class="p-4 text-center text-gray-400 italic">Cargando catálogo desde Firestore...</td>
+              <td colspan="5" class="p-4 text-center text-gray-400 italic">Cargando catálogo desde Firestore...</td>
             </tr>
           </tbody>
         </table>
@@ -629,7 +603,7 @@
           <h3 class="text-base font-bold text-gray-800 flex items-center gap-2">
             📜 Registro de Auditoría y Modificaciones por Usuario
           </h3>
-          <p class="text-xs text-gray-500">Historial de acciones registradas con firma de usuario y fecha (Exclusivo Administrador / Diseñador).</p>
+          <p class="text-xs text-gray-500">Historial de acciones registradas con firma de usuario y fecha (Exclusivo Diseñador).</p>
         </div>
         <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full">
           🟢 Tiempo Real
@@ -660,6 +634,27 @@
   <!-- VISTA 4: ADMINISTRADOR (MENÚ RESUMEN DE VENTAS + GESTIÓN CATEGORÍAS + PLANTILLA WA) -->
   <main id="vista-admin" class="max-w-5xl mx-auto p-4 md:p-6 flex-1 w-full hidden space-y-6">
     
+    <!-- CONFIGURACIÓN DEL COSTO DE ENVÍO -->
+    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
+      <div class="border-b pb-3">
+        <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+          🛵 Configuración del Costo de Envío
+        </h2>
+        <p class="text-xs text-gray-500">Establece el valor fijo que se sumará al carrito en pedidos con delivery a domicilio.</p>
+      </div>
+
+      <form onsubmit="guardarCostoEnvio(event)" class="flex flex-col sm:flex-row gap-3 items-end max-w-md">
+        <div class="flex-1 w-full">
+          <label class="block text-xs font-bold text-gray-700 mb-1">Precio de Envío ($)</label>
+          <input type="number" id="config-envio-input" required min="0" placeholder="Ej: 500" class="w-full text-xs p-2.5 border border-gray-300 rounded font-mono font-bold focus:ring-2 focus:ring-red-500 focus:outline-none">
+        </div>
+        <button type="submit" id="btn-guardar-costo-envio" class="bg-red-700 hover:bg-red-800 text-white text-xs font-bold px-4 py-2.5 rounded shadow transition-colors flex items-center justify-center gap-1">
+          💾 Guardar Costo
+        </button>
+      </form>
+    </div>
+
+
     <!-- MENÚ RESUMEN Y MÉTRICAS DE PEDIDOS (SOLO ADMIN) -->
     <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6">
       <div class="border-b pb-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
@@ -894,16 +889,14 @@
         categoria: "Pollería",
         precio: 3800,
         icono: "🍗",
-        descripcion: "Limpio, trozado o entero listo para cocinar.",
-        activo: true
+        descripcion: "Limpio, trozado o entero listo para cocinar."
       },
       {
         nombre: "Milanesas de Pechuga (1 kg)",
         categoria: "Ofertas",
         precio: 5200,
         icono: "🥩",
-        descripcion: "Preparadas artesanalmente con pan rallado y especias.",
-        activo: true
+        descripcion: "Preparadas artesanalmente con pan rallado y especias."
       }
     ];
 
@@ -923,113 +916,9 @@
     let pedidoPendiente = null;
     let aliasActual = "POLLERIA.REY.MP";
     let telefonoWhatsappActual = "5493564123456";
-    let plantillaWhatsappActual = PLANTILLA_WHATSAPP_DEFECTO;
+    let plantillaWhatsappActual = PLANTILLA_WHATSAPP_DEFECTO;   
+    let costoEnvioActual = 0;
     let categoriaSeleccionadaFiltro = "Todas";
-
-    // Módulo de Permisos por Rol
-    const LISTA_PERMISOS = [
-      { id: "crear_modificar_eliminar_productos", label: "Crear / Modificar / Eliminar Productos" },
-      { id: "modificar_alias", label: "Modificar Alias de Transferencia" },
-      { id: "modificar_precio_envio", label: "Modificar Precio de Envío / Delivery" },
-      { id: "crear_usuarios_inferiores", label: "Crear Usuarios Inferiores a su Categoría" },
-      { id: "crear_categorias_usuarios", label: "Crear Categorías / Roles de Usuarios" },
-      { id: "crear_modificar_categorias", label: "Crear / Modificar Categorías" },
-      { id: "crear_modificar_rubros", label: "Crear / Modificar Rubros" },
-      { id: "crear_modificar_iconos", label: "Crear / Modificar Íconos" },
-      { id: "ver_modificar_clientes", label: "Ver / Modificar Clientes" },
-      { id: "ver_habilitar_modificar_premios", label: "Ver / Habilitar / Modificar Premios y Puntos" },
-      { id: "acceso_delivery", label: "Acceso a Módulo Delivery" },
-      { id: "notificaciones_delivery", label: "Alertas y Notificaciones de Delivery" }
-    ];
-
-    let permisosCache = {
-      disenador: LISTA_PERMISOS.reduce((acc, p) => ({ ...acc, [p.id]: true }), {}),
-      administrador: LISTA_PERMISOS.reduce((acc, p) => ({ ...acc, [p.id]: true }), {
-        crear_modificar_eliminar_productos: true
-      }),
-      delivery_general: { acceso_delivery: true, notificaciones_delivery: true },
-      delivery_reparto: { acceso_delivery: true, notificaciones_delivery: true },
-      cliente: {}
-    };
-
-    // ESCUCHAR PERMISOS EN TIEMPO REAL DESDE FIRESTORE
-    onSnapshot(doc(db, "config", "permisos_roles"), (docSnap) => {
-      if (docSnap.exists()) {
-        permisosCache = docSnap.data();
-      }
-      // Garantizar que administrador y disenador siempre mantengan permiso de productos si no está definido
-      if (permisosCache.administrador) permisosCache.administrador.crear_modificar_eliminar_productos = true;
-      if (permisosCache.disenador) permisosCache.disenador.crear_modificar_eliminar_productos = true;
-
-      cargarPermisosRolUI(document.getElementById("select-rol-permisos")?.value || "administrador");
-      aplicarPermisosInterface();
-    });
-
-    window.cargarPermisosRolUI = (rol) => {
-      const cont = document.getElementById("contenedor-permisos-grid");
-      if (!cont) return;
-
-      const permisosRol = permisosCache[rol] || {};
-
-      cont.innerHTML = LISTA_PERMISOS.map(p => `
-        <label class="flex items-center gap-2 p-2 rounded border bg-gray-50 border-gray-200 hover:bg-amber-50/50 cursor-pointer text-xs">
-          <input type="checkbox" data-permiso="${p.id}" ${permisosRol[p.id] ? 'checked' : ''} class="w-4 h-4 text-amber-600 rounded focus:ring-amber-500">
-          <span class="font-semibold text-gray-700">${p.label}</span>
-        </label>
-      `).join("");
-    };
-
-    window.guardarPermisosRolActual = async () => {
-      const rolSel = document.getElementById("select-rol-permisos").value;
-      const inputs = document.querySelectorAll("#contenedor-permisos-grid input[data-permiso]");
-
-      if (!permisosCache[rolSel]) permisosCache[rolSel] = {};
-
-      inputs.forEach(input => {
-        const pId = input.getAttribute("data-permiso");
-        permisosCache[rolSel][pId] = input.checked;
-      });
-
-      try {
-        await setDoc(doc(db, "config", "permisos_roles"), permisosCache, { merge: true });
-        await registrarAuditoria("Modificación Permisos", `Permisos actualizados para el rol "${rolSel}" por ${usuarioActual.username}`);
-        alert(`¡Permisos para el rol '${rolSel}' guardados exitosamente!`);
-      } catch (err) {
-        console.error("Error al guardar permisos:", err);
-        alert("Ocurrió un error al guardar los permisos.");
-      }
-    };
-
-    function tienePermiso(permisoKey) {
-      if (usuarioActual.rol === "disenador" || usuarioActual.rol === "administrador") {
-        if (permisoKey === "crear_modificar_eliminar_productos") return true;
-      }
-      if (usuarioActual.rol === "disenador") return true; // El Diseñador posee superacceso
-      return Boolean(permisosCache[usuarioActual.rol]?.[permisoKey]);
-    }
-
-    function aplicarPermisosInterface() {
-      // Bloqueo / Habilitación de funcionalidades dinámicas en la interfaz
-      const btnGuardarProd = document.getElementById("btn-guardar-producto");
-      if (btnGuardarProd) btnGuardarProd.disabled = !tienePermiso("crear_modificar_eliminar_productos");
-
-      const inputAlias = document.getElementById("config-alias-input");
-      if (inputAlias) inputAlias.disabled = !tienePermiso("modificar_alias");
-
-      const btnGuardarAlias = document.getElementById("btn-guardar-alias");
-      if (btnGuardarAlias) btnGuardarAlias.disabled = !tienePermiso("modificar_alias");
-
-      const btnGuardarCat = document.getElementById("btn-guardar-categoria");
-      if (btnGuardarCat) btnGuardarCat.disabled = !tienePermiso("crear_modificar_categorias");
-
-      const formCrearUser = document.getElementById("form-crear-usuario");
-      if (formCrearUser) {
-        const inputs = formCrearUser.querySelectorAll("input, select, button");
-        inputs.forEach(i => i.disabled = !tienePermiso("crear_usuarios_inferiores"));
-      }
-
-      configurarNavegacionSegunRol();
-    }
 
     // Configuración de Puntos por Defecto
     let configPuntos = {
@@ -1151,11 +1040,6 @@
     // FUNCIONES ADMINISTRACIÓN DE CATEGORÍAS
     window.guardarCategoria = async (e) => {
       e.preventDefault();
-
-      if (!tienePermiso("crear_modificar_categorias")) {
-        return alert("No tienes permisos para realizar esta acción.");
-      }
-
       const idEditar = document.getElementById("cat-id-editar").value;
       const nombreCat = document.getElementById("cat-nombre").value.trim();
 
@@ -1210,9 +1094,6 @@
     };
 
     window.eliminarCategoria = async (id, nombre) => {
-      if (!tienePermiso("crear_modificar_categorias")) {
-        return alert("No tienes permisos para eliminar categorías.");
-      }
       if (!confirm(`¿Eliminar la categoría "${nombre}"? Los productos asignados a ella requerirán reasignación.`)) return;
       try {
         await deleteDoc(doc(db, "categories", id));
@@ -1268,6 +1149,47 @@
       if (inputPuntos) inputPuntos.value = configPuntos.puntos || 10;
       if (inputFecha) inputFecha.value = configPuntos.fechaExpiracion || "";
     });
+
+    // 5. ESCUCHAR COSTO DE ENVÍO DESDE FIRESTORE
+    onSnapshot(doc(db, "config", "envio"), (docSnap) => {
+      if (docSnap.exists() && typeof docSnap.data().costo !== "undefined") {
+        costoEnvioActual = Number(docSnap.data().costo) || 0;
+      } else {
+        costoEnvioActual = 0;
+      }
+      const inputEnvio = document.getElementById("config-envio-input");
+      if (inputEnvio) inputEnvio.value = costoEnvioActual;
+      actualizarCarritoUI();
+    });
+
+    // AUXILIAR DE PERMISOS
+    function tienePermiso(permiso) {
+      if (usuarioActual.rol === "administrador" || usuarioActual.rol === "disenador") return true;
+      if (permiso === "mod_envio" && usuarioActual.rol === "administrador") return true;
+      return false;
+    }
+
+    // GUARDAR COSTO DE ENVÍO EN FIRESTORE
+    window.guardarCostoEnvio = async (e) => {
+      e.preventDefault();
+      if (!tienePermiso("mod_envio")) return alert("No tienes permisos para modificar el costo de envío.");
+
+      const nuevoCosto = Number(document.getElementById("config-envio-input").value) || 0;
+
+      try {
+        await setDoc(doc(db, "config", "envio"), {
+          costo: nuevoCosto,
+          actualizadoPor: usuarioActual.username,
+          actualizadoEn: serverTimestamp()
+        }, { merge: true });
+
+        await registrarAuditoria("Modificación Costo Envío", `Costo de envío actualizado a $${nuevoCosto} por ${usuarioActual.username}.`);
+        alert("¡Costo de envío actualizado con éxito!");
+      } catch (err) {
+        console.error("Error al guardar el costo de envío:", err);
+        alert("Ocurrió un error al intentar actualizar el costo de envío.");
+      }
+    };
 
     // FUNCIONALIDADES EXCLUSIVAS DEL MODO DISEÑADOR
     window.reiniciarPedidosCompletos = async () => {
@@ -1335,10 +1257,6 @@
     // GUARDAR CONFIGURACIÓN DE PUNTOS EN FIRESTORE
     window.guardarConfiguracionPuntos = async (e) => {
       e.preventDefault();
-      if (!tienePermiso("ver_habilitar_modificar_premios")) {
-        return alert("No tienes permisos para configurar el sistema de puntos.");
-      }
-
       const activo = document.getElementById("puntos-activo").checked;
       const pesos = Number(document.getElementById("puntos-pesos").value);
       const puntos = Number(document.getElementById("puntos-cantidad").value);
@@ -1392,10 +1310,6 @@
     // GUARDAR ALIAS EN FIRESTORE
     window.guardarAliasTransferencia = async (e) => {
       e.preventDefault();
-      if (!tienePermiso("modificar_alias")) {
-        return alert("No tienes permisos para modificar el Alias.");
-      }
-
       const nuevoAlias = document.getElementById("config-alias-input").value.trim().toUpperCase();
       if (!nuevoAlias) return;
 
@@ -1453,6 +1367,7 @@
         lblHorario.innerText = "🕒 Horario preferente de entrega (Aproximado)";
         subtexto.innerText = "Ej: de 12:00 a 13:00 hs.";
       }
+      actualizarCarritoUI();
     };
 
     window.gestionarSeleccionPago = (metodo) => {
@@ -1504,6 +1419,59 @@
       document.getElementById("modal-login").classList.remove("hidden");
     };
 
+    window.confirmarPedidoAnonimo = () => {
+      document.getElementById("modal-premio").classList.add("hidden");
+      if (pedidoPendiente) {
+        const tempPedido = pedidoPendiente;
+        pedidoPendiente = null;
+        procesarEnvioPedido(tempPedido);
+      }
+    };
+
+    window.crearUsuarioSistema = (e) => {
+      e.preventDefault();
+      const username = document.getElementById("user-nombre").value.trim();
+      const pass = document.getElementById("user-pass").value.trim();
+      const rol = document.getElementById("user-rol").value;
+
+      if (!username || !pass) return alert("Completa los datos del usuario.");
+
+      const existe = baseUsuarios.find(u => u.username.toLowerCase() === username.toLowerCase());
+      if (existe) return alert("El nombre de usuario ya está registrado.");
+
+      const nuevoU = {
+        username: username,
+        pass: pass,
+        nombre: username,
+        rol: rol,
+        creadoPor: usuarioActual.username
+      };
+
+      baseUsuarios.push(nuevoU);
+      localStorage.setItem("polleria_rey_usuarios", JSON.stringify(baseUsuarios));
+      registrarAuditoria("Creación de Usuario", `Usuario ${username} con rol ${rol} creado por ${usuarioActual.username}.`);
+      alert(`Usuario ${username} creado con éxito.`);
+      document.getElementById("form-crear-usuario").reset();
+      renderizarUsuariosCreados();
+    };
+
+    function renderizarUsuariosCreados() {
+      const tbody = document.getElementById("tabla-usuarios-creados");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+
+      baseUsuarios.forEach(u => {
+        tbody.innerHTML += `
+          <tr class="hover:bg-gray-50 text-xs">
+            <td class="p-2 border-r font-bold text-gray-900">${u.username}</td>
+            <td class="p-2 border-r">${u.nombre || u.username}</td>
+            <td class="p-2 border-r"><span class="bg-red-50 text-red-700 px-1.5 py-0.5 rounded font-bold uppercase text-[10px]">${u.rol}</span></td>
+            <td class="p-2 text-gray-500">${u.creadoPor || "sistema"}</td>
+          </tr>
+        `;
+      });
+    }
+
     window.ejecutarLogin = (e) => {
       e.preventDefault();
       const userIngresado = document.getElementById("login-usuario").value.trim();
@@ -1525,7 +1493,7 @@
 
         actualizarBadgeUsuario();
         registrarAuditoria("Inicio de Sesión", `El usuario ${usuarioActual.username} ingresó al sistema.`);
-        aplicarPermisosInterface();
+        configurarNavegacionSegunRol();
 
         if (pedidoPendiente) {
           const tempPedido = pedidoPendiente;
@@ -1543,7 +1511,7 @@
       }
       usuarioActual = { username: "anonimo", nombre: "Anónimo", rol: "cliente" };
       actualizarBadgeUsuario();
-      aplicarPermisosInterface();
+      configurarNavegacionSegunRol();
     };
 
     function actualizarBadgeUsuario() {
@@ -1570,15 +1538,16 @@
       const btnClientesCompras = document.getElementById("btn-tab-clientes-compras");
       const btnPuntos = document.getElementById("btn-tab-puntos");
 
-      const accesoDelivery = tienePermiso("acceso_delivery");
-      const accesoProductos = tienePermiso("crear_modificar_eliminar_productos");
+      const esDelivery = usuarioActual.rol === "delivery_general" || 
+                         usuarioActual.rol === "delivery_reparto" || 
+                         usuarioActual.rol === "delivery";
 
       btnCli.style.display = "block";
-      btnDel.style.display = accesoDelivery ? "block" : "none";
-      btnDis.style.display = (usuarioActual.rol === "disenador" || usuarioActual.rol === "administrador" || accesoProductos) ? "block" : "none";
+      btnDel.style.display = (esDelivery || usuarioActual.rol === "administrador") ? "block" : "none";
+      btnDis.style.display = (usuarioActual.rol === "disenador") ? "block" : "none";
       btnAdm.style.display = (usuarioActual.rol === "administrador") ? "block" : "none";
-      btnClientesCompras.style.display = (tienePermiso("ver_modificar_clientes") || usuarioActual.rol === "disenador" || usuarioActual.rol === "administrador") ? "block" : "none";
-      btnPuntos.style.display = (tienePermiso("ver_habilitar_modificar_premios") || usuarioActual.rol === "disenador" || usuarioActual.rol === "administrador") ? "block" : "none";
+      btnClientesCompras.style.display = (usuarioActual.rol === "administrador" || usuarioActual.rol === "disenador") ? "block" : "none";
+      btnPuntos.style.display = (usuarioActual.rol === "administrador" || usuarioActual.rol === "disenador") ? "block" : "none";
 
       if (usuarioActual.rol === "administrador") {
         mostrarVista("admin");
@@ -1587,7 +1556,7 @@
         mostrarVista("disenador");
         renderizarUsuariosCreados();
       }
-      else if (accesoDelivery) mostrarVista("delivery");
+      else if (esDelivery) mostrarVista("delivery");
       else mostrarVista("cliente");
     }
 
@@ -1665,7 +1634,7 @@
 
       productosCache = {};
       snapshot.docs.forEach(docSnap => {
-        const p = { id: docSnap.id, activo: true, ...docSnap.data() };
+        const p = { id: docSnap.id, ...docSnap.data() };
         productosCache[p.id] = p;
       });
 
@@ -1699,14 +1668,11 @@
         productosFiltrados = listaProductos.filter(p => (p.categoria || '').toLowerCase() === categoriaSeleccionadaFiltro.toLowerCase());
       }
 
-      // En el catálogo del cliente se muestran ÚNICAMENTE los productos activos (activo !== false)
-      const productosTiendaCliente = productosFiltrados.filter(p => p.activo !== false);
-
       if (contenedorTienda) {
-        if (productosTiendaCliente.length === 0) {
-          contenedorTienda.innerHTML = `<div class="col-span-full text-center py-8 text-gray-400 text-xs italic">No hay productos disponibles en esta categoría.</div>`;
+        if (productosFiltrados.length === 0) {
+          contenedorTienda.innerHTML = `<div class="col-span-full text-center py-8 text-gray-400 text-xs italic">No hay productos en esta categoría.</div>`;
         } else {
-          productosTiendaCliente.forEach(p => {
+          productosFiltrados.forEach(p => {
             const precioFormateado = Number(p.precio || 0).toLocaleString("es-AR");
             const esOferta = (p.categoria || '').toLowerCase() === 'ofertas';
 
@@ -1741,22 +1707,13 @@
       if (tablaDisenador) {
         listaProductos.forEach(p => {
           const precioFormateado = Number(p.precio || 0).toLocaleString("es-AR");
-          const esActivo = p.activo !== false;
           tablaDisenador.innerHTML += `
-            <tr class="hover:bg-gray-50 text-[11px] ${!esActivo ? 'bg-gray-100/70 text-gray-400' : ''}">
+            <tr class="hover:bg-gray-50 text-[11px]">
               <td class="p-2 border-r text-center text-lg">${p.icono || '🍗'}</td>
-              <td class="p-2 border-r font-bold text-gray-900 ${!esActivo ? 'line-through text-gray-400' : ''}">${p.nombre}</td>
+              <td class="p-2 border-r font-bold text-gray-900">${p.nombre}</td>
               <td class="p-2 border-r"><span class="bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded font-semibold">${p.categoria || 'Pollería'}</span></td>
               <td class="p-2 border-r font-extrabold text-red-700">$${precioFormateado}</td>
-              <td class="p-2 border-r text-center">
-                <span class="${esActivo ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'} px-2 py-0.5 rounded text-[10px] font-bold">
-                  ${esActivo ? '🟢 Habilitado' : '🔴 Deshabilitado'}
-                </span>
-              </td>
               <td class="p-2 text-center space-x-1">
-                <button onclick="alternarEstadoProducto('${p.id}')" class="${esActivo ? 'bg-red-100 hover:bg-red-200 text-red-800' : 'bg-emerald-100 hover:bg-emerald-200 text-emerald-800'} font-bold px-2 py-1 rounded transition-colors text-[10px]">
-                  ${esActivo ? '🚫 Deshabilitar' : '✅ Habilitar'}
-                </button>
                 <button onclick="cargarProductoParaEditar('${p.id}')" class="bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold px-2 py-1 rounded transition-colors text-[10px]">
                   ✏️ Editar
                 </button>
@@ -1770,33 +1727,7 @@
       }
     }
 
-    window.alternarEstadoProducto = async (id) => {
-      if (!tienePermiso("crear_modificar_eliminar_productos")) {
-        return alert("No tienes permisos para modificar el estado de los productos.");
-      }
-      const prod = productosCache[id];
-      if (!prod) return;
-
-      const nuevoEstado = !(prod.activo !== false);
-
-      try {
-        await updateDoc(doc(db, "products", id), {
-          activo: nuevoEstado,
-          modificadoPor: usuarioActual.username,
-          modificadoEn: serverTimestamp()
-        });
-
-        await registrarAuditoria("Estado Producto Modificado", `Producto "${prod.nombre}" (${id}) ${nuevoEstado ? 'habilitado' : 'deshabilitado'} por ${usuarioActual.username}.`);
-      } catch (err) {
-        console.error("Error al cambiar estado del producto:", err);
-        alert("Ocurrió un error al cambiar el estado del producto.");
-      }
-    };
-
     window.cargarProductoParaEditar = (id) => {
-      if (!tienePermiso("crear_modificar_eliminar_productos")) {
-        return alert("No tienes permisos para modificar productos.");
-      }
       const prod = productosCache[id];
       if (!prod) return alert("No se encontraron los datos del producto.");
 
@@ -1822,7 +1753,7 @@
       document.getElementById("prod-id-editar").value = "";
       document.getElementById("prod-icono").value = "🍗";
 
-      document.getElementById("titulo-form-producto").innerHTML = "📦 Gestión de Productos - Crear Producto";
+      document.getElementById("titulo-form-producto").innerHTML = "🎨 Panel del Diseñador - Crear Producto";
       document.getElementById("btn-cancelar-edicion").classList.add("hidden");
 
       const btnSubmit = document.getElementById("btn-guardar-producto");
@@ -1832,10 +1763,6 @@
 
     window.guardarNuevoProducto = async (e) => {
       e.preventDefault();
-
-      if (!tienePermiso("crear_modificar_eliminar_productos")) {
-        return alert("No tienes permisos para crear o modificar productos.");
-      }
       
       const idEditar = document.getElementById("prod-id-editar").value;
       const esEdicion = Boolean(idEditar);
@@ -1873,7 +1800,6 @@
             precio: precio,
             descripcion: desc,
             icono: icono,
-            activo: true,
             creadoPor: usuarioActual.username,
             creadoEn: serverTimestamp()
           });
@@ -1893,9 +1819,6 @@
     };
 
     window.eliminarProducto = async (id, nombre) => {
-      if (!tienePermiso("crear_modificar_eliminar_productos")) {
-        return alert("No tienes permisos para eliminar productos.");
-      }
       if (!confirm(`¿Estás seguro de eliminar el producto "${nombre}" del catálogo global?`)) return;
       try {
         await deleteDoc(doc(db, "products", id));
@@ -1912,57 +1835,6 @@
       }
     };
 
-    window.crearUsuarioSistema = async (e) => {
-      e.preventDefault();
-      if (!tienePermiso("crear_usuarios_inferiores")) {
-        return alert("No tienes permisos para crear nuevos usuarios.");
-      }
-
-      const userIngresado = document.getElementById("user-nombre").value.trim();
-      const passIngresado = document.getElementById("user-pass").value.trim();
-      const rolSeleccionado = document.getElementById("user-rol").value;
-
-      if (!userIngresado || !passIngresado) return;
-
-      const existe = baseUsuarios.find(u => u.username.toLowerCase() === userIngresado.toLowerCase());
-      if (existe) {
-        return alert("El nombre de usuario o correo ya está registrado.");
-      }
-
-      const nuevoUsuario = {
-        username: userIngresado,
-        pass: passIngresado,
-        nombre: userIngresado,
-        rol: rolSeleccionado,
-        creadoPor: usuarioActual.username
-      };
-
-      baseUsuarios.push(nuevoUsuario);
-      localStorage.setItem("polleria_rey_usuarios", JSON.stringify(baseUsuarios));
-
-      await registrarAuditoria("Creación Usuario", `Nuevo usuario "${userIngresado}" (${rolSeleccionado}) creado por ${usuarioActual.username}`);
-      alert("¡Usuario creado exitosamente!");
-      document.getElementById("form-crear-usuario").reset();
-      renderizarUsuariosCreados();
-    };
-
-    function renderizarUsuariosCreados() {
-      const tbody = document.getElementById("tabla-usuarios-creados");
-      if (!tbody) return;
-
-      tbody.innerHTML = "";
-      baseUsuarios.forEach(u => {
-        tbody.innerHTML += `
-          <tr class="hover:bg-gray-50 text-[11px]">
-            <td class="p-2 border-r font-bold text-gray-900">${u.username}</td>
-            <td class="p-2 border-r text-gray-700">${u.nombre || u.username}</td>
-            <td class="p-2 border-r"><span class="bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-semibold capitalize">${u.rol}</span></td>
-            <td class="p-2 text-gray-500 font-mono">${u.creadoPor || 'Sistema'}</td>
-          </tr>
-        `;
-      });
-    }
-
     window.agregarAlCarrito = (id, nombre, precio, icono = '🍗') => {
       const existe = carrito.find(i => i.id === id);
       if (existe) {
@@ -1977,53 +1849,476 @@
       const lista = document.getElementById("items-carrito");
       const totalEl = document.getElementById("total-carrito");
       const cantItemsEl = document.getElementById("cant-items");
+      const montoEnvioEl = document.getElementById("monto-envio-display");
 
       const resumenCant = document.getElementById("resumen-cant-items");
       const resumenTotal = document.getElementById("resumen-total-importe");
+
+      const esRetiro = document.getElementById("cli-retiro-local") ? document.getElementById("cli-retiro-local").checked : false;
 
       if (carrito.length === 0) {
         lista.innerHTML = `<li class="text-xs text-gray-400 italic py-2 text-center">El carrito está vacío.</li>`;
         totalEl.innerText = "$0";
         cantItemsEl.innerText = "0 items";
+        if (montoEnvioEl) montoEnvioEl.innerText = "$0";
 
         if (resumenCant) resumenCant.innerText = "0 productos";
         if (resumenTotal) resumenTotal.innerText = "$0";
         return;
       }
 
-      let total = 0;
+      let subtotal = 0;
       let totalCant = 0;
       lista.innerHTML = "";
 
       carrito.forEach((item, idx) => {
-        total += item.precio * item.cantidad;
+        subtotal += item.precio * item.cantidad;
         totalCant += item.cantidad;
         lista.innerHTML += `
           <li class="py-1.5 flex justify-between items-center text-xs">
             <div><span class="font-bold text-gray-800">${item.cantidad}x</span> ${item.icono || '🍗'} ${item.nombre}</div>
             <div class="flex items-center gap-2">
-              <span class="font-semibold text-gray-700">$${(item.precio * item.cantidad).toLocaleString("es-AR")}</span>
-              <button onclick="cambiarCantidadCarrito(${idx}, -1)" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-1.5 py-0.5 rounded font-bold">-</button>
-              <button onclick="cambiarCantidadCarrito(${idx}, 1)" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-1.5 py-0.5 rounded font-bold">+</button>
+              <span class="font-semibold text-gray-700">$${(item.precio * item.cantidad).toLocaleString('es-AR')}</span>
+              <button onclick="eliminarDelCarrito(${idx})" class="text-red-500 font-bold px-1 hover:bg-red-50 rounded">✕</button>
             </div>
-          </li>
-        `;
+          </li>`;
       });
 
-      totalEl.innerText = `$${total.toLocaleString("es-AR")}`;
+      const costoEnvioAplicado = esRetiro ? 0 : costoEnvioActual;
+      const totalConEnvio = subtotal + costoEnvioAplicado;
+
+      if (montoEnvioEl) {
+        montoEnvioEl.innerText = esRetiro ? "Gratis (Retiro)" : `$${costoEnvioAplicado.toLocaleString('es-AR')}`;
+      }
+
+      const totalFormateado = `$${totalConEnvio.toLocaleString('es-AR')}`;
+      totalEl.innerText = totalFormateado;
       cantItemsEl.innerText = `${totalCant} items`;
 
-      if (resumenCant) resumenCant.innerText = `${totalCant} productos`;
-      if (resumenTotal) resumenTotal.innerText = `$${total.toLocaleString("es-AR")}`;
+      if (resumenCant) resumenCant.innerText = `${totalCant} ${totalCant === 1 ? 'producto' : 'productos'}`;
+      if (resumenTotal) resumenTotal.innerText = totalFormateado;
     }
 
-    window.cambiarCantidadCarrito = (idx, cambio) => {
-      carrito[idx].cantidad += cambio;
-      if (carrito[idx].cantidad <= 0) {
-        carrito.splice(idx, 1);
-      }
+    window.eliminarDelCarrito = (index) => {
+      carrito.splice(index, 1);
       actualizarCarritoUI();
     };
+
+    window.realizarPedido = (e) => {
+      e.preventDefault();
+      if (carrito.length === 0) return alert("Agrega al menos un producto al carrito.");
+
+      const esRetiro = document.getElementById("cli-retiro-local").checked;
+      const horaDesde = document.getElementById("cli-horario-desde").value;
+      const horaHasta = document.getElementById("cli-horario-hasta").value;
+
+      let horarioPreferente = "";
+      if (horaDesde || horaHasta) {
+        horarioPreferente = `De ${horaDesde || '--:--'} a ${horaHasta || '--:--'} hs`;
+      }
+
+      const subtotal = carrito.reduce((acc, i) => acc + (i.precio * i.cantidad), 0);
+      const costoEnvioFinal = esRetiro ? 0 : costoEnvioActual;
+
+      pedidoPendiente = {
+        nombreCliente: document.getElementById("cli-nombre").value.trim(),
+        telefonoCliente: document.getElementById("cli-telefono").value.trim(),
+        esRetiroLocal: esRetiro,
+        direccionEnvio: esRetiro ? "Retiro en local" : document.getElementById("cli-direccion").value.trim(),
+        horarioPreferente: horarioPreferente || "Sin preferencia especificada",
+        metodoPago: document.getElementById("cli-pago").value,
+        observaciones: document.getElementById("cli-observaciones").value.trim() || "Sin observaciones",
+        items: carrito.map(i => ({ productId: i.id, nombre: i.nombre, icono: i.icono, cantidad: i.cantidad, precioUnitario: i.precio })),
+        costoEnvio: costoEnvioFinal,
+        subtotal: subtotal,
+        total: subtotal + costoEnvioFinal
+      };
+
+      if (usuarioActual.username === "anonimo") {
+        document.getElementById("modal-premio").classList.remove("hidden");
+      } else {
+        procesarEnvioPedido(pedidoPendiente);
+      }
+    };
+
+    async function procesarEnvioPedido(dataPedido) {
+      const clienteData = {
+        ...dataPedido,
+        estado: "pendiente",
+        creadoPorUsuario: usuarioActual.username,
+        creadoEn: serverTimestamp()
+      };
+
+      try {
+        const docRef = await addDoc(collection(db, "orders"), clienteData);
+
+        await registrarAuditoria("Creación de Pedido", `Pedido #${docRef.id.slice(-5).toUpperCase()} registrado por "${usuarioActual.username}" por $${clienteData.total}`);
+
+        const idPedidoShort = docRef.id.slice(-5).toUpperCase();
+        const resumenItems = clienteData.items.map(i => `• ${i.icono || '🍗'} ${i.cantidad}x ${i.nombre} ($${(i.precioUnitario * i.cantidad).toLocaleString('es-AR')})`).join("\n");
+        const modoTexto = clienteData.esRetiroLocal ? "🏪 *RETIRO EN LOCAL*" : `📍 *Dirección:* ${clienteData.direccionEnvio}`;
+        const horarioTexto = clienteData.esRetiroLocal ? `🕒 *Horario estimado de retiro:* ${clienteData.horarioPreferente}` : `🕒 *Horario preferente de entrega:* ${clienteData.horarioPreferente}`;
+        const pagoTexto = clienteData.metodoPago === 'transferencia' ? `Transferencia (Alias: ${aliasActual})` : 'Efectivo';
+        
+        const recordatorioTransferencia = clienteData.metodoPago === 'transferencia' 
+          ? "⚠️ *RECORDATORIO:* Por favor no olvides enviar el comprobante de transferencia por este medio para confirmar el pedido." 
+          : "";
+
+        let mensajeFinal = plantillaWhatsappActual
+          .replace(/{ID}/g, idPedidoShort)
+          .replace(/{CLIENTE}/g, clienteData.nombreCliente)
+          .replace(/{USUARIO}/g, usuarioActual.username)
+          .replace(/{MODO_ENTREGA}/g, modoTexto)
+          .replace(/{HORARIO}/g, horarioTexto)
+          .replace(/{PAGO}/g, pagoTexto)
+          .replace(/{RECORDATORIO_TRANSFERENCIA}/g, recordatorioTransferencia)
+          .replace(/{OBSERVACIONES}/g, clienteData.observaciones)
+          .replace(/{DETALLE_PRODUCTOS}/g, resumenItems)
+          .replace(/{TOTAL}/g, `$${clienteData.total.toLocaleString('es-AR')}`);
+
+        mensajeFinal = mensajeFinal.replace(/\n\s*\n\s*\n/g, '\n\n').trim();
+
+        carrito = [];
+        actualizarCarritoUI();
+        document.getElementById("form-checkout").reset();
+        alternarModoEntrega(false);
+        document.getElementById("alerta-alias-copiado").classList.add("hidden");
+
+        window.location.href = `https://wa.me/${telefonoWhatsappActual}?text=${encodeURIComponent(mensajeFinal)}`;
+
+      } catch (err) {
+        console.error("Error al registrar pedido:", err);
+      }
+    }
+
+    function emitirSonidoAlerta() {
+      if (!sonidoHabilitado) return;
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(600, ctx.currentTime);
+        osc.frequency.setValueAtTime(900, ctx.currentTime + 0.15);
+
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.5);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.5);
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+
+    window.alternarSonido = () => {
+      sonidoHabilitado = !sonidoHabilitado;
+      const btn = document.getElementById("btn-audio");
+      btn.innerText = sonidoHabilitado ? "🔔 Alertas: Activadas" : "🔕 Alerta Sonora: Desactivada";
+    };
+
+    window.cambiarEstadoPedido = async (idPedido, nuevoEstado) => {
+      try {
+        await updateDoc(doc(db, "orders", idPedido), {
+          estado: nuevoEstado,
+          actualizadoPor: usuarioActual.username,
+          actualizadoEn: serverTimestamp()
+        });
+
+        await registrarAuditoria("Cambio Estado Pedido", `Pedido #${idPedido.slice(-5).toUpperCase()} cambiado a "${nuevoEstado}" por ${usuarioActual.username}`);
+      } catch (err) {
+        console.error("Error al cambiar estado:", err);
+        alert("Error al actualizar el estado del pedido.");
+      }
+    };
+
+    function crearTarjetaDelivery(pedido) {
+      const card = document.createElement("div");
+      card.className = "bg-white p-3 rounded-lg border border-gray-200 shadow-sm space-y-2 text-xs";
+
+      const idShort = pedido.id.slice(-5).toUpperCase();
+      const fechaFormat = pedido.creadoEn ? new Date(pedido.creadoEn.seconds * 1000).toLocaleTimeString("es-AR", { hour: '2-digit', minute: '2-digit' }) : "--:--";
+
+      const detalleItems = (pedido.items || []).map(i => `<div class="flex justify-between"><span>${i.cantidad}x ${i.icono || '🍗'} ${i.nombre}</span><span class="font-bold">$${(i.precioUnitario * i.cantidad).toLocaleString('es-AR')}</span></div>`).join("");
+
+      const modoEntregaBadge = pedido.esRetiroLocal 
+        ? `<span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded font-bold text-[10px]">🏪 Retiro</span>`
+        : `<span class="bg-blue-100 text-blue-900 px-1.5 py-0.5 rounded font-bold text-[10px]">🛵 Envío</span>`;
+
+      const pagoBadge = pedido.metodoPago === 'transferencia'
+        ? `<span class="bg-purple-100 text-purple-900 px-1.5 py-0.5 rounded font-bold text-[10px]">💳 Transf.</span>`
+        : `<span class="bg-emerald-100 text-emerald-900 px-1.5 py-0.5 rounded font-bold text-[10px]">💵 Efectivo</span>`;
+
+      card.innerHTML = `
+        <div class="flex justify-between items-center border-b pb-1">
+          <span class="font-black text-red-700">#${idShort}</span>
+          <span class="text-[10px] text-gray-400 font-mono">${fechaFormat} hs</span>
+        </div>
+        <div>
+          <div class="font-bold text-gray-900">${pedido.nombreCliente || "Cliente"}</div>
+          <div class="text-[11px] text-gray-500">📱 ${pedido.telefonoCliente || "N/A"}</div>
+          <div class="text-[11px] text-gray-700 font-semibold mt-0.5">${pedido.direccionEnvio || "Retiro en local"}</div>
+        </div>
+        <div class="flex gap-1 pt-1 border-t">
+          ${modoEntregaBadge}
+          ${pagoBadge}
+        </div>
+        <div class="bg-gray-50 p-1.5 rounded space-y-0.5 border border-gray-100 max-h-24 overflow-y-auto">
+          ${detalleItems}
+        </div>
+        ${pedido.costoEnvio ? `<div class="flex justify-between text-[11px] text-gray-500"><span>Coste Envío:</span><span>$${pedido.costoEnvio.toLocaleString('es-AR')}</span></div>` : ''}
+        <div class="flex justify-between items-center pt-1 border-t font-black text-sm text-gray-900">
+          <span>Total:</span>
+          <span class="text-red-700">$${(pedido.total || 0).toLocaleString('es-AR')}</span>
+        </div>
+        ${pedido.observaciones && pedido.observaciones !== 'Sin observaciones' ? `<div class="text-[10px] bg-yellow-50 p-1 rounded border border-yellow-200 text-yellow-800">📝 ${pedido.observaciones}</div>` : ''}
+        
+        <div class="pt-2 flex flex-wrap gap-1">
+          ${pedido.estado !== 'pendiente' ? `<button onclick="cambiarEstadoPedido('${pedido.id}', 'pendiente')" class="flex-1 bg-yellow-100 hover:bg-yellow-200 text-yellow-800 text-[10px] font-bold py-1 rounded">🟡 Pendiente</button>` : ''}
+          ${pedido.estado !== 'en_preparacion' ? `<button onclick="cambiarEstadoPedido('${pedido.id}', 'en_preparacion')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-800 text-[10px] font-bold py-1 rounded">🔵 Preparar</button>` : ''}
+          ${pedido.estado !== 'en_camino' ? `<button onclick="cambiarEstadoPedido('${pedido.id}', 'en_camino')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-800 text-[10px] font-bold py-1 rounded">🛵 En Camino</button>` : ''}
+          ${pedido.estado !== 'entregado' ? `<button onclick="cambiarEstadoPedido('${pedido.id}', 'entregado')" class="flex-1 bg-green-600 hover:bg-green-700 text-white text-[10px] font-bold py-1 rounded">🟢 Entregar</button>` : ''}
+          ${pedido.estado !== 'cancelado' ? `<button onclick="cambiarEstadoPedido('${pedido.id}', 'cancelado')" class="bg-red-100 hover:bg-red-200 text-red-700 text-[10px] font-bold px-2 py-1 rounded">🔴</button>` : ''}
+        </div>
+      `;
+
+      return card;
+    }
+
+    function renderizarClientesCompras(clientesMap) {
+      const tbody = document.getElementById("tabla-clientes-compras");
+      if (!tbody) return;
+
+      tbody.innerHTML = "";
+      const lista = Object.values(clientesMap);
+
+      if (lista.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400 italic">No hay clientes ni ventas registradas.</td></tr>`;
+        return;
+      }
+
+      lista.forEach(c => {
+        let puntosAcumulados = 0;
+        if (configPuntos.activo && configPuntos.pesos > 0) {
+          puntosAcumulados = Math.floor((c.totalConsumido / configPuntos.pesos) * configPuntos.puntos);
+        }
+
+        const msjPromo = `¡Hola ${c.nombre}! 🍗 Vimos que tenés acumulados ${puntosAcumulados} puntos en Pollería REY. ¡Aprovechá nuestras ofertas exclusivas de hoy!`;
+        const linkWa = `https://wa.me/${c.telefono.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(msjPromo)}`;
+
+        tbody.innerHTML += `
+          <tr class="hover:bg-gray-50 text-xs">
+            <td class="p-2.5 border-r font-bold text-gray-900">${c.nombre}</td>
+            <td class="p-2.5 border-r font-mono">${c.telefono}</td>
+            <td class="p-2.5 border-r text-center font-bold">${c.cantPedidos}</td>
+            <td class="p-2.5 border-r text-right font-extrabold text-red-700">$${c.totalConsumido.toLocaleString('es-AR')}</td>
+            <td class="p-2.5 border-r text-center"><span class="bg-amber-100 text-amber-900 font-black px-2 py-0.5 rounded-full text-[10px]">⭐ ${puntosAcumulados} pts</span></td>
+            <td class="p-2.5 text-center">
+              <a href="${linkWa}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1 rounded text-[10px] transition-colors inline-flex items-center gap-1">
+                💬 Enviar Promo
+              </a>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    const qOrdersRealtime = query(collection(db, "orders"), orderBy("creadoEn", "desc"));
+
+    onSnapshot(qOrdersRealtime, (snapshot) => {
+      const columnas = {
+        pendiente: document.getElementById("col-pendiente"),
+        en_preparacion: document.getElementById("col-en_preparacion"),
+        en_camino: document.getElementById("col-en_camino"),
+        entregado: document.getElementById("col-entregado"),
+        cancelado: document.getElementById("col-cancelado"),
+      };
+
+      const contadores = { pendiente: 0, en_preparacion: 0, en_camino: 0, entregado: 0, cancelado: 0 };
+      Object.values(columnas).forEach(col => { if(col) col.innerHTML = ""; });
+
+      if (!esCargaInicial) {
+        snapshot.docChanges().forEach(change => {
+          if (change.type === "added" && change.doc.data().estado === "pendiente") {
+            emitirSonidoAlerta();
+          }
+        });
+      } else {
+        esCargaInicial = false;
+      }
+
+      const clientesMap = {};
+      const listaPedidos = [];
+
+      snapshot.docs.forEach(docSnap => {
+        const order = { id: docSnap.id, ...docSnap.data() };
+        listaPedidos.push(order);
+        const colKey = order.estado || "pendiente";
+
+        if (columnas[colKey]) {
+          contadores[colKey]++;
+          columnas[colKey].appendChild(crearTarjetaDelivery(order));
+        }
+
+        // Agrupar datos para la sección de Registro de Clientes y Compras
+        const telKey = order.telefonoCliente || "sin_telefono";
+        if (!clientesMap[telKey]) {
+          clientesMap[telKey] = {
+            nombre: order.nombreCliente || "Cliente",
+            telefono: order.telefonoCliente || "N/A",
+            cantPedidos: 0,
+            totalConsumido: 0
+          };
+        }
+        clientesMap[telKey].cantPedidos += 1;
+        clientesMap[telKey].totalConsumido += (order.total || 0);
+      });
+
+      Object.keys(contadores).forEach(key => {
+        const badge = document.getElementById(`cant-${key}`);
+        if (badge) badge.innerText = contadores[key];
+      });
+
+      renderizarClientesCompras(clientesMap);
+      actualizarResumenEstadisticosAdmin(listaPedidos);
+    });
+
+    // LÓGICA DE CALCULO DE MÉTRICAS Y RESUMEN PARA MODO ADMINISTRADOR
+    function actualizarResumenEstadisticosAdmin(pedidos) {
+      const ahora = new Date();
+      
+      const inicioDia = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
+      
+      const diaSemana = ahora.getDay(); 
+      const diffPistas = ahora.getDate() - diaSemana + (diaSemana === 0 ? -6 : 1);
+      const inicioSemana = new Date(ahora);
+      inicioSemana.setDate(diffPistas);
+      inicioSemana.setHours(0,0,0,0);
+      
+      const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+      const inicioAnio = new Date(ahora.getFullYear(), 0, 1);
+
+      let statDia = { count: 0, total: 0 };
+      let statSemana = { count: 0, total: 0 };
+      let statMes = { count: 0, total: 0 };
+      let statAnio = { count: 0, total: 0 };
+
+      let statEntrega = {
+        delivery: { count: 0, total: 0 },
+        retiro: { count: 0, total: 0 }
+      };
+
+      let statPago = {
+        efectivo: { count: 0, total: 0 },
+        transferencia: { count: 0, total: 0 }
+      };
+
+      const productosMap = {};
+
+      pedidos.forEach(p => {
+        if (p.estado === "cancelado") return;
+
+        const totalP = p.total || 0;
+        const fechaP = p.creadoEn ? new Date(p.creadoEn.seconds * 1000) : new Date();
+
+        if (fechaP >= inicioDia) { statDia.count++; statDia.total += totalP; }
+        if (fechaP >= inicioSemana) { statSemana.count++; statSemana.total += totalP; }
+        if (fechaP >= inicioMes) { statMes.count++; statMes.total += totalP; }
+        if (fechaP >= inicioAnio) { statAnio.count++; statAnio.total += totalP; }
+
+        if (p.esRetiroLocal) {
+          statEntrega.retiro.count++;
+          statEntrega.retiro.total += totalP;
+        } else {
+          statEntrega.delivery.count++;
+          statEntrega.delivery.total += totalP;
+        }
+
+        if (p.metodoPago === 'transferencia') {
+          statPago.transferencia.count++;
+          statPago.transferencia.total += totalP;
+        } else {
+          statPago.efectivo.count++;
+          statPago.efectivo.total += totalP;
+        }
+
+        (p.items || []).forEach(item => {
+          const keyProd = item.nombre || "Producto Desconocido";
+          if (!productosMap[keyProd]) {
+            productosMap[keyProd] = {
+              nombre: keyProd,
+              cant: 0,
+              recaudacion: 0
+            };
+          }
+          productosMap[keyProd].cant += item.cantidad;
+          productosMap[keyProd].recaudacion += (item.precioUnitario * item.cantidad);
+        });
+      });
+
+      const elDiaP = document.getElementById("stat-dia-pedidos");
+      const elDiaM = document.getElementById("stat-dia-monto");
+      if (elDiaP && elDiaM) {
+        elDiaP.innerText = `${statDia.count} ped.`;
+        elDiaM.innerText = `$${statDia.total.toLocaleString('es-AR')}`;
+      }
+
+      const elSemP = document.getElementById("stat-semana-pedidos");
+      const elSemM = document.getElementById("stat-semana-monto");
+      if (elSemP && elSemM) {
+        elSemP.innerText = `${statSemana.count} ped.`;
+        elSemM.innerText = `$${statSemana.total.toLocaleString('es-AR')}`;
+      }
+
+      const elMesP = document.getElementById("stat-mes-pedidos");
+      const elMesM = document.getElementById("stat-mes-monto");
+      if (elMesP && elMesM) {
+        elMesP.innerText = `${statMes.count} ped.`;
+        elMesM.innerText = `$${statMes.total.toLocaleString('es-AR')}`;
+      }
+
+      const elAnioP = document.getElementById("stat-anio-pedidos");
+      const elAnioM = document.getElementById("stat-anio-monto");
+      if (elAnioP && elAnioM) {
+        elAnioP.innerText = `${statAnio.count} ped.`;
+        elAnioM.innerText = `$${statAnio.total.toLocaleString('es-AR')}`;
+      }
+
+      const elEntDel = document.getElementById("stat-entrega-delivery");
+      const elEntRet = document.getElementById("stat-entrega-retiro");
+      if (elEntDel) elEntDel.innerText = `${statEntrega.delivery.count} ped. ($${statEntrega.delivery.total.toLocaleString('es-AR')})`;
+      if (elEntRet) elEntRet.innerText = `${statEntrega.retiro.count} ped. ($${statEntrega.retiro.total.toLocaleString('es-AR')})`;
+
+      const elPagEfe = document.getElementById("stat-pago-efectivo");
+      const elPagTra = document.getElementById("stat-pago-transferencia");
+      if (elPagEfe) elPagEfe.innerText = `${statPago.efectivo.count} ped. ($${statPago.efectivo.total.toLocaleString('es-AR')})`;
+      if (elPagTra) elPagTra.innerText = `${statPago.transferencia.count} ped. ($${statPago.transferencia.total.toLocaleString('es-AR')})`;
+
+      const tbodyProds = document.getElementById("tabla-resumen-productos");
+      if (tbodyProds) {
+        tbodyProds.innerHTML = "";
+        const listaProdStats = Object.values(productosMap);
+
+        if (listaProdStats.length === 0) {
+          tbodyProds.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-gray-400 italic">No hay registros de ventas por producto.</td></tr>`;
+        } else {
+          listaProdStats.sort((a, b) => b.recaudacion - a.recaudacion);
+          listaProdStats.forEach(pr => {
+            tbodyProds.innerHTML += `
+              <tr class="hover:bg-gray-50 text-xs">
+                <td class="p-2.5 border-r font-bold text-gray-900">${pr.nombre}</td>
+                <td class="p-2.5 border-r text-center font-bold">${pr.cant} u.</td>
+                <td class="p-2.5 text-right font-extrabold text-red-700">$${pr.recaudacion.toLocaleString('es-AR')}</td>
+              </tr>
+            `;
+          });
+        }
+      }
+    }
   </script>
 </body>
 </html>
