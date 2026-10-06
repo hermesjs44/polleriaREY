@@ -2,19 +2,26 @@ const CACHE_NAME = 'polleria-rey-v1';
 const ASSETS = [
   '/polleriaREY/',
   '/polleriaREY/index.html',
-  '/polleriaREY/manifest.json'
+  '/polleriaREY/manifest.json',
+  '/polleriaREY/icono-192.png',
+  '/polleriaREY/icono-512.png'
 ];
 
-// Instalar el Service Worker
+// Instalar el Service Worker y almacenar en caché los archivos básicos
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
+      return cache.addAll(ASSETS).catch(err => console.log("Error de caché inicial:", err));
     })
   );
 });
 
-// Responder con los archivos en caché o buscarlos en la red
+// Activar el Service Worker
+self.addEventListener('activate', (e) => {
+  e.waitUntil(self.clients.claim());
+});
+
+// Responder peticiones de la red o del caché
 self.addEventListener('fetch', (e) => {
   e.respondWith(
     caches.match(e.request).then((res) => {
